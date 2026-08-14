@@ -1,0 +1,46 @@
+---
+import { getImage } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { WigglyFrame } from "../design-system/components/WigglyFrame";
+import photo from "../content/case-studies/images/ClemPortfolioPhoto.png";
+
+const optimizedPhoto = await getImage({ src: photo });
+---
+
+<BaseLayout title="About — Clem" description="A bit about Clem, a UX designer at Sportlogiq.">
+	<div class="mx-auto max-w-3xl blur-fade-in pb-24">
+		<div class="flex flex-col items-center gap-10">
+			<div class="relative w-56 shrink-0">
+				<img
+					src={optimizedPhoto.src}
+					alt="Portrait of Clem"
+					width={optimizedPhoto.attributes.width}
+					height={optimizedPhoto.attributes.height}
+					class="aspect-square w-full rounded-full object-cover"
+				/>
+				<WigglyFrame client:load radius={999} strokeWidth={8} />
+			</div>
+
+			<div class="prose prose-invert max-w-none prose-headings:font-serif prose-headings:text-paper prose-p:text-ink-100">
+				<h1 class="font-serif text-4xl text-paper">Hellooo</h1>
+
+				<p>
+					I started my career in newsprint design at an award winning student
+					newspaper and honed my skills working in graphic design in the arts & cultural scene in
+					Montreal. I found my way to Sportlogiq where I transitioned from a graphic design role on the creative team to UX design.
+				</p>
+
+				<p>
+					I learned to be resourceful as the only UX designer at Sportlogiq for the last 3 years. I'm looking to join an environment where I can continue my growth as a UX designer.
+				</p>
+
+				<p>Je suis bilingue !</p>
+
+				<p>
+					Contact:<br />
+					<a href="mailto:lettersforclem@gmail.com">lettersforclem@gmail.com</a>
+				</p>
+			</div>
+		</div>
+	</div>
+</BaseLayout>

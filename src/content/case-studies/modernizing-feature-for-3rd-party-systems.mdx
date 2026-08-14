@@ -1,0 +1,62 @@
+---
+title: "Modernizing Feature For 3rd Party Systems"
+description: "User flow proposal after a quick solution was implemented at the request of the product director."
+tags: ["UX Improvement"]
+mainImage: "./images/PLAYER CARD BANNER.png"
+mainImageAlt: "Modernizing Feature For 3rd Party Systems interface, placeholder"
+homeImage: "./images/PlayerCardImg.png"
+homeImageAlt: "Modernizing Feature For 3rd Party Systems, placeholder thumbnail"
+order: 4
+---
+
+import CaseStudyImage from "../../design-system/components/CaseStudyImage.astro";
+import BeforeAfterImage from "../../design-system/components/BeforeAfterImage.astro";
+import Old from "./images/PLAYER CARDOld.png";
+import New from "./images/PLAYER CARDNew.png";
+import bodyImage1 from "./images/Standard Stats.png";
+import bodyImage2 from "./images/PlayerCard-Skills.png";
+import bodyImage3 from "./images/PlayerCard-SkillsExpanded.png";
+import bodyImage4 from "./images/PlayerCard-Usage.png";
+
+Legacy architecture of iCE player cards prevented us from opening up this feature for a new white labeling project.
+
+The immediate demands from the product team is to convert the player card modal into a linkable page. The quick solution to open a new window for the player card gave us the time and opportunity to review existing user feedback for this feature.
+
+## User Feedback
+- Player search load time is unacceptably long
+- Visualizations use an unconventional scale
+- Visualizations are confusing
+- Stats tables are hard to read
+
+## Proposed solutions
+- Added a league filter for player searching to drastically reduce load time (backend resources were not available for this project)
+- Add the existing watchlist feature to the player search to avoid hefty load times and quicker access to players of interest
+- Unified the pages visualization and scale to match the principles of the new Table Design System
+- Created visual hierarchy in visualizations to improve user experience
+- Updated the nav to include a new Player Card section that will allow users to search for players as well as act as the page where users can view the player cards
+
+
+<BeforeAfterImage
+  srcBefore={Old}
+  srcAfter={New}
+  altBefore="Old Player Card"
+  altAfter="New Player Card"
+  labelBefore="Old Design"
+  labelAfter="New Design"
+  caption="Drag to compare"
+/>
+
+## Proposed Flow
+<CaseStudyImage src={bodyImage1} alt="Player Card landing" caption="Player Cards point of entry" />
+
+<div class="h-8" />
+
+<CaseStudyImage src={bodyImage2} alt="Viewing a player card" caption="Viewing a player card" />
+
+<div class="h-8" />
+
+<CaseStudyImage src={bodyImage3} alt="Show more details in player card" caption="Additional details" />
+
+<div class="h-8" />
+
+<CaseStudyImage src={bodyImage4} alt="Updated stats table" caption="Updated tables using new table design system" />

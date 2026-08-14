@@ -1,0 +1,69 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import { Nav } from "../design-system/components/Nav";
+
+type Props = {
+	title: string;
+	description?: string;
+};
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" href="/favicon.ico" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		{description && <meta name="description" content={description} />}
+		<title>{title}</title>
+		<ClientRouter />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Jua&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=block"
+			rel="stylesheet"
+		/>
+		<script is:inline>
+			// Runs synchronously before body paints. If the visitor has already
+			// seen the entrance animation this session, skip it on this page
+			// load — this is a full-page-load (Astro MPA) site, so without this
+			// the fade/blur-in would replay on every single navigation.
+			if (sessionStorage.getItem("clem-entrance-seen")) {
+				document.documentElement.classList.add("no-entrance-anim");
+			} else {
+				sessionStorage.setItem("clem-entrance-seen", "1");
+			}
+
+			// Record how far down the departing page was scrolled, right before
+			// navigation starts. ::view-transition-old(page-content) uses this to
+			// offset object-position, so the exit animates from whatever was
+			// actually on screen instead of always snapping to the page's top.
+			// Attached once — document isn't torn down by a soft navigation, so
+			// these listeners survive across pages on their own.
+			let exitScrollY = 0;
+			document.addEventListener("astro:before-preparation", () => {
+				exitScrollY = window.scrollY;
+			});
+			// Astro's swap step wipes <html>'s style/class attributes partway
+			// through the transition (to match the new page's markup) — after
+			// astro:before-preparation runs, but before the pseudo-elements are
+			// actually painted with it. Re-apply the saved value right after the
+			// swap so it survives for the rest of the transition.
+			document.addEventListener("astro:after-swap", () => {
+				document.documentElement.style.setProperty("--exit-scroll-y", `${exitScrollY}px`);
+			});
+		</script>
+	</head>
+	<body>
+		<div class="mx-auto max-w-[1440px] px-10">
+			<Nav client:load transition:persist />
+			<div transition:name="page-content" class="pt-10">
+				<slot />
+			</div>
+		</div>
+	</body>
+</html>

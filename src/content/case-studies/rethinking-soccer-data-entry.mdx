@@ -1,0 +1,68 @@
+---
+title: "Rethinking Soccer Data Entry"
+description: "20-40% cost savings by reducing data entry time through RTS-inspired user flow/interface and rapid AI prototyping."
+tags: ["Research", "Component Library", "Prototyping", "AI Builder"]
+meta: "6 months"
+mainImage: "./images/EventingProjectBanner.png"
+mainImageAlt: "Soccer data entry interface, placeholder"
+homeImage: "./images/EventingAppHomeBanner.png"
+homeImageAlt: "Rethinking Soccer Data Entry, placeholder thumbnail"
+order: 1
+---
+
+import CaseStudyImage from "../../design-system/components/CaseStudyImage.astro";
+import bodyImage1 from "./images/Eventor.png";
+import bodyImage2 from "./images/Eventing App.png";
+import bodyImage3 from "./images/EventingPrototypingBanner.png";
+
+Reducing data entry costs through RTS-inspired user flow/interface and rapid AI prototyping.
+
+## The problem
+
+Sportlogiq needed to reduce the costs of its data collection processes in soccer. The largest costs of data collection is the manual data collection which takes around 8.5 hours per game and the quality assurance step required another half hour.
+
+I had been tasked with finding as many bandaid fixes to the data entry app in order to find immediate improvements. 
+
+It didn’t take long before the PM and I understood that the soccer data collection app that had been repurposed from the hockey data collection app had a very low ceiling in terms of efficiency gains. I informed the Product Director that I would explore a new workflow for soccer data entry while doing this work and explore the future integration of computer vision detected annotations that would require manual validation with the help of the AI team.
+
+<CaseStudyImage src={bodyImage1} alt="Legacy video annotation app" caption="An eventor using the legacy video annotation app." />
+
+## The approach
+
+We ideated three different workflows, but the one that resonated most with users was inspired by Real-Time Strategy games like Starcraft and Age of Empires. The interaction patterns from RTS games allow us to reduce the mental load for fast paced keyboard actions. The goal was to make sure that a persons capacity to do their task wasn't limited by the interface.
+
+This meant:
+- Allowing users to event both teams at the same time
+- Build an RTS inspired UI and Hotkey set up
+- Automate certain sequences of events based on existing and game logic
+
+I shared an analogy with the video annotation team to help guide the ideation of the new "Expected Next Event" feature. The idea that eventing a game is similar to writing a sentence: Subject, verb, adjective, etc. 
+
+What this looks like in the context of eventing is this: Reception, pass, reception, shot, goal keeper location, goal keeper save.
+
+With this in mind we began listing all possible interactions after an event and these rules were the basis for the "Expected Next Event". The goal of this feature is to allow users to leverage their knowledge of the sport and to reduce the cognitive load of the task.
+
+The Learning and Development team also saw the value of the new workflow and hypothesized that this UX would also reduce learning time as it’ll easily guides users in their task. The legacy annotation app is known to have a steep learning curve by displaying almost every single button all at once.
+
+## AI builder for prototyping and benchmarking
+Using Lovable meant we could test a new interaction pattern against real match footage within a few hours. Stakeholders were extremely happy that we were able to test and get feedback before we committed thousands of dollars of development time on building the new video annotation app.
+
+Eventually I used Lovable to build a fully functional prototype that we were able to use to do benchmark testing to compare it to the legacy video annotation app.
+
+Once we put it in the hands of a cohort of full time video annotators, we saw a decrease in collection time ranging from 20% to 40% after only a few hours of use (8.5 hours to 4.5-6.5 hours). They achieved these time savings despite some features that weren't available in the prototype that we plan to incorporate in the future that we expect should further increase savings.
+
+We also discovered that QA time dropped from 30 minutes per game to just a few minutes because users are able to event both teams at the same time instead of one after another.
+
+<CaseStudyImage src={bodyImage3} alt="Prototyping in Figma vs Lovable" caption="Building a prototype in Figma is fine for typical UX interactions but in order to have a usable prototype for something more akin to a video game, I chose to learn and explore what we could do with an AI Builder" />
+
+
+## The result
+
+- A Focus on reducing cognitive load allowed us to provide a guided user flow that validated a 20-40% reduction in data collection costs. The CEO stated that these cost savings amount to a quarter million dollars without any increase of number of games processed. 
+- I was able to leverage and gain a new skill with AI builders. This new approach was greatly appreciated by the Operations team and management as I was able to de-risk and validate new features before we committed to building them.
+- This was my first time leading a large and high stakes project. It gave me confidence that I was able to get the buy-in from all the stakeholders.
+​
+
+The benchmark numbers helped the company renew and increase the size of a contract for 7 figures ARR. I was unfortunately laid off (company acquisition) while the app is in the late stages of development, so I won't see the final version go live. 
+
+<CaseStudyImage src={bodyImage2} alt="Redesigned data entry interface, placeholder" caption="The redesigned video annotation app, inspired by RTS games." />

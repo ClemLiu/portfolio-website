@@ -1,0 +1,47 @@
+---
+title: "List Of People Looking For Work"
+description: "Website for workers and employers inspired by Craigslist. Designed with Figma and built with Claude Code + Figma Console MCP."
+tags: ["Product Design", "Figma Console MCP", "Claude Code", "Storybook"]
+meta: "1 week"
+mainImage: "./images/LOPLFWProjectBanner.png"
+mainImageAlt: "List Of People Looking For Work interface, placeholder"
+homeImage: "./images/ListProjectImage.png"
+homeImageAlt: "List Of People Looking For Work, placeholder thumbnail"
+order: 2
+---
+
+import CaseStudyImage from "../../design-system/components/CaseStudyImage.astro";
+import BeforeAfterImage from "../../design-system/components/BeforeAfterImage.astro";
+import lightMode from "./images/LOPLF-Defaultsplit1.png";
+import darkMode from "./images/LOPLF-Defaultsplit2.png";
+import bodyImage1 from "./images/LOPLF-Tokens.png";
+
+I chose to build this website as a way to explore Claude Code, Storybook and Semantic token structures.
+
+Check it out at <a href="https://www.listofpeoplelookingforwork.com">listofpeoplelookingforwork.com</a>
+
+<BeforeAfterImage
+  srcBefore={lightMode}
+  srcAfter={darkMode}
+  altBefore="Browse the list page in light mode"
+  altAfter="Browse the list page in dark mode"
+  labelBefore="Light"
+  labelAfter="Dark"
+  caption="Drag to compare light and dark mode"
+/>
+
+## Process
+
+- Initial wireframes and user flows
+- Claude Code for scoping out the technical needs of the project
+- Built a component library in Figma
+- Set up primitive variables and semantic tokens for dark mode
+- Figma to design high fidelity UI
+- Figma Console MCP + Claude Code to set up a Storybook with all components
+- Figma Console MCP + Claude Code to generate text styles based on designs and components
+- Figma to revise all designs for consistency using updated design system that now lives in Storybook
+- Claude Code to build out all required features and to guide me into setting up the website
+- QA tested all features
+- Final revisions done in Figma and updated once again with Figma Console MCP + Claude Code
+
+<CaseStudyImage src={bodyImage1} alt="Light mode and Dark Mode tokens" caption="Semantic token structure using primitive variables" />

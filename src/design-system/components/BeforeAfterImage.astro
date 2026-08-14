@@ -1,0 +1,34 @@
+---
+import { getImage } from "astro:assets";
+import { BeforeAfterSlider } from "./BeforeAfterSlider";
+
+type Props = {
+  srcBefore: ImageMetadata;
+  srcAfter: ImageMetadata;
+  altBefore: string;
+  altAfter: string;
+  labelBefore?: string;
+  labelAfter?: string;
+  caption?: string;
+};
+
+const { srcBefore, srcAfter, altBefore, altAfter, labelBefore, labelAfter, caption } = Astro.props;
+const optimizedBefore = await getImage({ src: srcBefore });
+const optimizedAfter = await getImage({ src: srcAfter });
+---
+
+<figure class="my-8">
+  <BeforeAfterSlider
+    client:load
+    srcBefore={optimizedBefore.src}
+    srcAfter={optimizedAfter.src}
+    altBefore={altBefore}
+    altAfter={altAfter}
+    labelBefore={labelBefore}
+    labelAfter={labelAfter}
+    width={optimizedBefore.attributes.width}
+    height={optimizedBefore.attributes.height}
+    className="w-full"
+  />
+  {caption && <figcaption class="mt-2 text-sm text-ink-300">{caption}</figcaption>}
+</figure>

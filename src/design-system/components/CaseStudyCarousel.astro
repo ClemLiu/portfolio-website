@@ -1,0 +1,27 @@
+---
+import { getImage } from "astro:assets";
+import { ImageCarousel } from "./ImageCarousel";
+
+type Props = {
+  images: { src: ImageMetadata; alt: string }[];
+  caption?: string;
+};
+
+const { images, caption } = Astro.props;
+const optimizedImages = await Promise.all(
+  images.map(async (img) => {
+    const optimized = await getImage({ src: img.src });
+    return {
+      src: optimized.src,
+      alt: img.alt,
+      width: optimized.attributes.width,
+      height: optimized.attributes.height,
+    };
+  }),
+);
+---
+
+<figure class="my-8">
+  <ImageCarousel client:load images={optimizedImages} className="w-full" />
+  {caption && <figcaption class="mt-2 text-sm text-ink-300">{caption}</figcaption>}
+</figure>

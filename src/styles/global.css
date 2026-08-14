@@ -1,0 +1,225 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-serif: "Jua", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* neutrals: warm near-black ink on warm off-white paper */
+  --color-paper: #faf9f6;
+  --color-paper-dark: #332d46;
+  --color-ink-950: #17160f;
+  --color-ink-800: #3a382e;
+  --color-ink-500: #7a7768;
+  --color-ink-300: #c7c4b6;
+  --color-ink-100: #ece9e0;
+
+  /* accent: indigo-violet */
+  --color-accent: #4f3ff0;
+  --color-accent-hover: #3f2fd4;
+  --color-accent-subtle: #ece9fd;
+
+  --radius-pill: 999px;
+}
+
+/* the site's default look is dark (not conditional on OS preference) */
+body {
+  background-color: var(--color-paper-dark);
+  color: var(--color-paper);
+}
+
+/* the standard low-opacity version of this recipe is tuned for a white
+   background — against this site's dark paper-dark bg, a 12%/8% black
+   shadow barely registers, so both layers are boosted well past the usual
+   light-mode values. Shared as a variable so components that can't just
+   rely on the blanket `img` rule below (anything whose actual img tag is
+   clipped by an overflow-hidden ancestor, or isn't an img at all — e.g.
+   the PDF viewer's iframe) can still apply the exact same shadow. */
+:root {
+  --image-shadow:
+    0 0px 4px hsla(0, 0%, 0%, 0.15), /* Ambient light shadow */
+    0 0px 16px hsla(0, 0%, 0%, 0.1); /* Direct light shadow */
+}
+
+/* soft lift off the dark background — applies site-wide so every case-study
+   screenshot, thumbnail, and portrait gets the same treatment without
+   needing it repeated on each image-rendering component. */
+img {
+  box-shadow: var(--image-shadow);
+}
+
+.soft-image-shadow {
+  box-shadow: var(--image-shadow);
+}
+
+/* one-time entrance — blur + fade only, no movement. Plays once on first
+   load and never again (see the sessionStorage-gated rule below and the
+   inline script in BaseLayout.astro). Used by nav and case-study content. */
+@keyframes blur-fade-in {
+  from {
+    opacity: 0;
+    filter: blur(12px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.blur-fade-in {
+  animation: blur-fade-in 0.8s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blur-fade-in {
+    animation: none;
+  }
+}
+
+/* set on <html> by an inline script before paint, once the visitor has
+   already seen the entrance animation this session (see BaseLayout.astro) */
+.no-entrance-anim .blur-fade-in {
+  animation: none;
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* astro:transitions / ClientRouter is active so nav can be
+   transition:persist'd (keeps its DOM node — and the logo's idle
+   animation — alive across navigations instead of restarting on every
+   page load), and so page-content (below) can have its own transition.
+   root itself carries no animation — nav is unnamed (rides along inside
+   it, but is visually unchanged since it's the same persisted node) and
+   page-content has its own named group, so root's own snapshot doesn't
+   need to do anything. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+/* page transition — exit lifts up slightly as it fades/blurs out; entrance
+   starts shifted up by that same amount and settles down into place, so
+   the two feel like a single continuous motion rather than two unrelated
+   fades. */
+@keyframes blur-fade-out {
+  to {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(-24px);
+  }
+}
+
+@keyframes content-fade-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+::view-transition-group(page-content) {
+  /* the browser's default per-transition box-morph (resizing/repositioning
+     this group from the old page's rect to the new page's rect) causes a
+     jump/bounce when the two pages have different heights — see the fuller
+     writeup in the project's Astro-view-transitions notes. Disabling the
+     animation alone isn't enough though: the group's frozen resting box
+     still isn't reliably independent of either page's height, so content
+     visibly shifted to compensate for the mismatch between home (tall)
+     and a case study (shorter). Pinning height to the viewport removes
+     the dependency on either page's actual content height entirely. */
+  animation: none;
+  height: 100vh;
+}
+
+/* the browser's default object-fit for these pseudo-elements is "fill" —
+   it stretches the captured page image to exactly match whatever box
+   dimensions get computed for it, with no aspect-ratio preservation. Home
+   and a case study have different natural heights, so that computed box
+   doesn't reliably match either page's real content height — the actual
+   page was getting vertically squished/stretched to fit, which reads as
+   content shifting (direction depends on which page is taller). */
+::view-transition-old(page-content),
+::view-transition-new(page-content) {
+  object-fit: none;
+}
+
+/* the entering page always starts at its own natural top — that's normal,
+   correct page-load behavior. */
+::view-transition-new(page-content) {
+  object-position: top;
+}
+
+/* the departing page, though, defaults to object-position: top too — which
+   means it always shows the TOP of its content regardless of how far the
+   visitor had actually scrolled, so the exit looked like it snapped back
+   to the top before animating away. Offset by how far it was scrolled
+   (set on :root right before navigation — see the inline script in
+   BaseLayout.astro) so the exit instead animates from whatever was
+   actually on screen. */
+::view-transition-old(page-content) {
+  object-position: 50% calc(-1 * var(--exit-scroll-y, 0px));
+}
+
+::view-transition-old(page-content) {
+  animation: 0.3s ease-out both blur-fade-out;
+}
+
+::view-transition-new(page-content) {
+  /* delay == the exit's duration, so the entrance only starts once the
+     old content has completely faded/blurred away */
+  animation: 0.3s ease-out 0.3s both content-fade-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page-content),
+  ::view-transition-new(page-content) {
+    animation: none;
+  }
+}
+
+/* homepage card hover tooltip — title reveals left-to-right in fixed-width
+   steps (one per character) so it reads as typed rather than a smooth wipe.
+   Width/step-count are set per-title via --tooltip-chars (see index.astro). */
+.title-tooltip {
+  width: 0;
+  /* the transition that actually plays is whichever state is being
+     transitioned TO — this (fast, no steps) governs hiding on mouse-out;
+     the hover rule below overrides it with the slow typewriter reveal
+     for showing on mouse-in. */
+  transition: width 0.15s ease-out;
+}
+
+.group:hover .title-tooltip {
+  width: var(--tooltip-target, calc(var(--tooltip-chars, 20) * 1ch + 1.5rem));
+  /* duration scales with character count so every title types at the same
+     speed — a fixed duration made short titles look slower per character
+     (fewer, bigger steps) and long titles faster (many small steps). */
+  transition: width calc(var(--tooltip-chars, 20) * 25ms) steps(var(--tooltip-chars, 20), end);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-tooltip {
+    transition: none;
+  }
+}
+
+/* below md (tablet-or-smaller) there's no real cursor to hover with, so
+   skip the whole reveal animation and cursor-follow positioning — the
+   title just sits pinned bottom-left (see index.astro's md: classes),
+   always visible, wrapping across lines instead of staying on one. */
+@media (max-width: 767.98px) {
+  .title-tooltip,
+  .group:hover .title-tooltip {
+    width: auto;
+    max-width: calc(100% - 2rem);
+    transition: none;
+  }
+}
+

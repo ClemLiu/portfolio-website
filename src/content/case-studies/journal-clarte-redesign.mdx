@@ -1,0 +1,31 @@
+---
+title: "Newspaper Redesign"
+description: "Redesigned le Journal Clarté for it's 90th anniversary"
+tags: ["Editorial Design", "Print"]
+mainImage: "./images/IMG_0200.png"
+mainImageAlt: "Journal Clarté redesign, placeholder"
+homeImage: "./images/IMG_0200.png"
+homeImageAlt: "Journal Clarté redesign, placeholder thumbnail"
+order: 3
+---
+
+import CaseStudyPdf from "../../design-system/components/CaseStudyPdf.astro";
+import BeforeAfterImage from "../../design-system/components/BeforeAfterImage.astro";
+import Before from "./images/oldclarte.png";
+import After from "./images/newclarte.png";
+
+Redesigned le Journal Clarté for it's 90th anniversary.
+
+<BeforeAfterImage
+  srcBefore={Before}
+  srcAfter={After}
+  altBefore="Clarté in 2024"
+  altAfter="Clarté in 2026"
+  labelBefore="Before"
+  labelAfter="After"
+  caption="Drag to compare"
+/>
+
+<div class="h-8" />
+
+<CaseStudyPdf src="/case-studies/journal-clarte/Clarté_69-Juil-Aout-2026v2.pdf" title="Journal Clarté No. 69" caption="Journal Clarté No. 69 — full issue" />

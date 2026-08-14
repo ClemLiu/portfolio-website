@@ -1,0 +1,25 @@
+---
+import { getImage } from "astro:assets";
+import { ExpandableImage } from "./ExpandableImage";
+
+type Props = {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+};
+
+const { src, alt, caption } = Astro.props;
+const optimized = await getImage({ src });
+---
+
+<figure class="my-8">
+  <ExpandableImage
+    client:load
+    src={optimized.src}
+    alt={alt}
+    width={optimized.attributes.width}
+    height={optimized.attributes.height}
+    className="w-full rounded-xl"
+  />
+  {caption && <figcaption class="mt-2 text-sm text-ink-300">{caption}</figcaption>}
+</figure>

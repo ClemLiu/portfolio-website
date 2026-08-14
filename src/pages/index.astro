@@ -1,0 +1,82 @@
+---
+import { getCollection } from "astro:content";
+import { Image } from "astro:assets";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { WigglyFrame } from "../design-system/components/WigglyFrame";
+
+const entries = (await getCollection("caseStudies")).sort(
+	(a, b) => (a.data.order ?? 99) - (b.data.order ?? 99)
+);
+const isOdd = entries.length % 2 !== 0;
+---
+
+<BaseLayout title="Clem — Product Designer">
+	<div class="grid grid-cols-1 gap-10 pb-24 sm:grid-cols-2">
+		{entries.map((entry, index) => (
+			<a
+				href={`/work/${entry.id}`}
+				class={`group relative block ${isOdd && index === 0 ? "sm:col-span-2" : ""}`}
+			>
+				<Image
+					src={entry.data.homeImage}
+					alt={entry.data.homeImageAlt}
+					class="aspect-[9/5] w-full rounded-xl object-cover"
+				/>
+				<WigglyFrame
+					client:load
+					radius={12}
+					strokeWidth={8}
+					seed={index}
+					className="opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+				/>
+				<span
+					class="title-tooltip pointer-events-none absolute bottom-4 left-4 z-20 overflow-hidden rounded-md bg-paper-dark/90 backdrop-blur-sm md:bottom-auto md:top-0 md:left-0 md:whitespace-nowrap"
+					style={`--tooltip-chars: ${entry.data.title.length};`}
+				>
+					<span class="block px-3 py-1.5 font-mono text-sm text-paper">{entry.data.title}</span>
+				</span>
+			</a>
+		))}
+	</div>
+</BaseLayout>
+
+<script>
+	// A plain module script only ever executes once per browser session — on
+	// Astro's client-side (view-transitions) navigation, the homepage's DOM
+	// gets swapped back in with fresh .group elements, but this module
+	// wouldn't rerun to attach listeners to them. astro:page-load fires after
+	// every navigation (initial load included), so re-run setup there instead
+	// of at the top level.
+	document.addEventListener("astro:page-load", async () => {
+		// ch-based width estimation drifts from the font's actual rendered width
+		// on longer titles, leaving a visible gap once fully revealed — measure
+		// each tooltip's real text width instead and use that as the hover target.
+		await document.fonts.ready;
+		document.querySelectorAll<HTMLElement>(".group").forEach((card) => {
+			const tooltip = card.querySelector<HTMLElement>(".title-tooltip");
+			const inner = tooltip?.querySelector<HTMLElement>("span");
+			if (!tooltip || !inner) return;
+			tooltip.style.setProperty("--tooltip-target", `${inner.scrollWidth + 12}px`);
+			const position = (e: MouseEvent) => {
+				// below md (768px — tablet-or-smaller), the tooltip stays put in a
+				// fixed spot centered over the card via the md: CSS below instead
+				// of tracking the cursor; clearing any leftover inline left/top
+				// lets that CSS win if the viewport was just resized down past it.
+				if (!window.matchMedia("(min-width: 768px)").matches) {
+					tooltip.style.removeProperty("left");
+					tooltip.style.removeProperty("top");
+					return;
+				}
+				const rect = card.getBoundingClientRect();
+				tooltip.style.left = `${e.clientX - rect.left + 16}px`;
+				tooltip.style.top = `${e.clientY - rect.top + 16}px`;
+			};
+			// mouseenter alone (no subsequent movement — e.g. refreshing the page
+			// with the cursor already resting over a card) never fires mousemove,
+			// so without this the tooltip would stay pinned at its CSS default
+			// (top-0 left-0) instead of the cursor until the mouse actually moves.
+			card.addEventListener("mouseenter", position);
+			card.addEventListener("mousemove", position);
+		});
+	});
+</script>

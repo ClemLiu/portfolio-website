@@ -1,0 +1,57 @@
+---
+title: "Unified Data Table Designs"
+description: "Reducing cognitive load with design guidelines and consistency."
+tags: ["Design System"]
+mainImage: "./images/TablesBanner.png"
+mainImageAlt: "Unified Data Table Designs interface, placeholder"
+homeImage: "./images/HomeBannerTables.png"
+homeImageAlt: "Unified Data Table Designs, placeholder thumbnail"
+order: 5
+---
+
+import CaseStudyImage from "../../design-system/components/CaseStudyImage.astro";
+import BeforeAfterImage from "../../design-system/components/BeforeAfterImage.astro";
+import OldTable from "./images/oldtable.png";
+import NewTable from "./images/FullTable.png";
+import RelaxedTable from "./images/Table-Relaxed.png";
+import CondensedTable from "./images/Table-Condensed.png";
+import bodyImage1 from "./images/TablesViz.png";
+
+Tables in iCE were never standardized and it has always been a point of frustration for users, engineers and me, the only designer.
+
+I found 4 (sort of 6) different table design systems and proposed a new design system for the tables that would finally rid us of this eternal design debt. I added to the component library a reusable component in Figma for users to build any required table. This also gave a source of truth for all tables in the product.
+
+<BeforeAfterImage
+  srcBefore={OldTable}
+  srcAfter={NewTable}
+  altBefore="One instance of the old tables"
+  altAfter="New table design"
+  labelBefore="Old"
+  labelAfter="New"
+  caption="Drag to compare"
+/>
+## Tasks
+- Audit all table functions and styles
+- Improve readability
+- Unify table styles
+- Structured table headers to contain a series of reusable features
+
+<BeforeAfterImage
+  srcBefore={RelaxedTable}
+  srcAfter={CondensedTable}
+  altBefore="Relaxed Table Rows"
+  altAfter="Condensed Table Rows"
+  labelBefore="Relaxed Table Rows"
+  labelAfter="Condensed Table Rows"
+  caption="Drag to compare"
+/>
+
+## Visualizations in the table, addition by subtraction!
+
+I stripped out a few peculiarities to how data was visually displayed:
+
+- Pills that reach their maximum when the value reaches 50%
+- Overlaying values on the pills
+- Simplifying colour range
+
+<CaseStudyImage src={bodyImage1} alt="Old table visuals and new table visuals" caption="" />
