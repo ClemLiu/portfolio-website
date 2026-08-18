@@ -41,16 +41,16 @@ export const Nav = ({
 
   return (
     <nav ref={navRef} className="blur-fade-in relative bg-paper-dark py-6 font-sans">
-      <div className="flex items-center justify-center gap-16">
+      <div className="flex items-center justify-center gap-4 sm:gap-16">
         <a
           href={aboutHref}
-          className="font-serif text-2xl text-paper transition-colors hover:text-accent"
+          className="font-serif text-lg text-paper transition-colors hover:text-accent sm:text-2xl"
         >
           About
         </a>
         <a href="/" aria-label={brand}>
           <LogoCursorReactive
-            className="h-[106px] w-auto"
+            className="h-16 w-auto sm:h-[106px]"
             wiggle={7}
             smoothen={1.7}
             octaves={4}
