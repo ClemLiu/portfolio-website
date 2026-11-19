@@ -10,6 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "data:targets": "node scripts/build-targets-data.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

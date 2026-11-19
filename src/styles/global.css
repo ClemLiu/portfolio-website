@@ -232,3 +232,28 @@ img {
   }
 }
 
+/* Buy-low / sell-high targets table (TargetsTable.tsx): hovering a row draws dashed lines
+   along its top and bottom edge, as in the Figma "State=Hover" row. */
+.tt-row::before,
+.tt-row::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, #e0e0e0 0 4px, transparent 4px 8px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+.tt-row::before {
+  top: 0;
+}
+.tt-row::after {
+  bottom: 0;
+}
+.tt-row:hover::before,
+.tt-row:hover::after {
+  opacity: 1;
+}
+

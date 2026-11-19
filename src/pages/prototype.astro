@@ -1,18 +1,18 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { PrototypeViewer } from "../design-system/components/PrototypeViewer";
+import { PrototypeViewer, type Prototype } from "../design-system/components/PrototypeViewer";
 
-// Add prototypes here: paste the regular Figma prototype link as `figmaUrl`
-// and it's converted to an embeddable one below. Each one gets its own page
-// in the pagination, in this order.
-const prototypes: { title: string; figmaUrl: string }[] = [
+// Each entry is one page of the pagination, in this order. Either:
+//  - `native`: a prototype rebuilt on the page itself, or
+//  - `figmaUrl`: paste a regular Figma prototype link; it's converted to an
+//    embeddable one below.
+const prototypes: ({ title: string; native: "targetsTable" } | { title: string; figmaUrl: string })[] = [
 	{
-		title: "Prototype 1",
-		figmaUrl:
-			"https://www.figma.com/proto/xOFtqBj6hEdv1OU8gECbud/Prototypes?node-id=10-9988&viewport=-790%2C74%2C0.72&t=OaE86knGDjgkIuW5-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=10%3A9988&page-id=0%3A1",
+		title: "Table Interactions",
+		native: "targetsTable",
 	},
 	{
-		title: "Prototype 2",
+		title: "Landing Page Interactions",
 		figmaUrl:
 			"https://www.figma.com/proto/xOFtqBj6hEdv1OU8gECbud/Prototypes?node-id=10-33357&viewport=-2277%2C318%2C0.74&t=RShGZwU1xDLMOxBn-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=10%3A9988&page-id=0%3A1",
 	},
@@ -25,7 +25,9 @@ const toEmbedUrl = (figmaUrl: string) => {
 	return url.toString();
 };
 
-const items = prototypes.map((p) => ({ ...p, embedUrl: toEmbedUrl(p.figmaUrl) }));
+const items: Prototype[] = prototypes.map((p) =>
+	"figmaUrl" in p ? { title: p.title, figmaUrl: p.figmaUrl, embedUrl: toEmbedUrl(p.figmaUrl) } : p,
+);
 ---
 
 <BaseLayout title="Prototype — Clem" description="A playground of prototypes by Clem.">
