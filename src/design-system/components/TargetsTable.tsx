@@ -249,7 +249,7 @@ export const TargetsTable = () => {
                   cursor: on ? "default" : "pointer",
                 }}
               >
-                <svg width="20" height="20" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
+                <svg width="12" height="12" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true">
                   <path d={d.iconPath} />
                 </svg>
               </button>
