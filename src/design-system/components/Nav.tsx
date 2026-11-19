@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LogoCursorReactive } from "./LogoCursorReactive";
 
 const LinkedInIcon = () => (
@@ -7,16 +7,38 @@ const LinkedInIcon = () => (
   </svg>
 );
 
+const linkClass = "font-serif text-base text-paper transition-colors hover:text-accent md:text-2xl";
+
 export const Nav = ({
   brand = "Clem",
+  portfolioHref = "/",
+  prototypeHref = "/prototype",
   aboutHref = "/about",
   linkedInHref = "https://www.linkedin.com/in/clément-liu-6606b290/",
 }: {
   brand?: string;
+  portfolioHref?: string;
+  prototypeHref?: string;
   aboutHref?: string;
   linkedInHref?: string;
 }) => {
   const navRef = useRef<HTMLElement>(null);
+  // Nav is persisted across client-side navigations, so the current page
+  // can't come from props — track it from the location instead. Starts null
+  // (nothing underlined) so server and first client render match.
+  const [path, setPath] = useState<string | null>(null);
+
+  useEffect(() => {
+    const update = () => setPath(window.location.pathname.replace(/\/$/, "") || "/");
+    update();
+    document.addEventListener("astro:page-load", update);
+    return () => document.removeEventListener("astro:page-load", update);
+  }, []);
+
+  // case studies live under /work/, which belongs to Portfolio
+  const isPortfolio = path === "/" || (path?.startsWith("/work/") ?? false);
+  const linkClassFor = (active: boolean) =>
+    active ? `${linkClass} underline decoration-2 underline-offset-4` : linkClass;
 
   useEffect(() => {
     const el = navRef.current;
@@ -41,16 +63,13 @@ export const Nav = ({
 
   return (
     <nav ref={navRef} className="blur-fade-in relative bg-paper-dark py-6 font-sans">
-      <div className="flex items-center justify-center gap-4 sm:gap-16">
-        <a
-          href={aboutHref}
-          className="font-serif text-lg text-paper transition-colors hover:text-accent sm:text-2xl"
-        >
-          About
-        </a>
-        <a href="/" aria-label={brand}>
+      {/* Below md the logo sits on its own row with the links underneath
+          (three text links plus the logo are wider than a phone); from md
+          up it's a single row: logo on the left, links + LinkedIn on the right. */}
+      <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between">
+        <a href="/" aria-label={brand} className="shrink-0">
           <LogoCursorReactive
-            className="h-16 w-auto sm:h-[106px]"
+            className="h-16 w-auto md:h-[106px]"
             wiggle={7}
             smoothen={1.7}
             octaves={4}
@@ -59,15 +78,26 @@ export const Nav = ({
             hoverSpinSpeed={200}
           />
         </a>
-        <a
-          href={linkedInHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="LinkedIn"
-          className="text-paper transition-colors hover:text-accent"
-        >
-          <LinkedInIcon />
-        </a>
+        <div className="flex items-center gap-5 md:gap-8">
+          <a href={portfolioHref} className={linkClassFor(isPortfolio)} aria-current={isPortfolio ? "page" : undefined}>
+            Portfolio
+          </a>
+          <a href={prototypeHref} className={linkClassFor(path === prototypeHref)} aria-current={path === prototypeHref ? "page" : undefined}>
+            Prototype
+          </a>
+          <a href={aboutHref} className={linkClassFor(path === aboutHref)} aria-current={path === aboutHref ? "page" : undefined}>
+            About
+          </a>
+          <a
+            href={linkedInHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+            className="text-paper transition-colors hover:text-accent"
+          >
+            <LinkedInIcon />
+          </a>
+        </div>
       </div>
     </nav>
   );

@@ -221,5 +221,14 @@ img {
     max-width: calc(100% - 2rem);
     transition: none;
   }
+
+  /* hovering at desktop width pins the label to the cursor via inline
+     left/top; if the window is then narrowed past md those would otherwise
+     stay and strand the label outside its card. !important is the only way
+     for a stylesheet rule to beat inline styles. */
+  .title-tooltip {
+    left: 1rem !important;
+    top: auto !important;
+  }
 }
 
