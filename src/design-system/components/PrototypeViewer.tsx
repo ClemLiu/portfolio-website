@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChatTextField } from "./ChatTextField";
 import { TargetsTable } from "./TargetsTable";
 
 export type Prototype =
@@ -11,8 +12,10 @@ export type Prototype =
     }
   | {
       title: string;
+      /** the text shown above the prototype */
+      label: string;
       /** a prototype rebuilt natively on the page instead of embedded from Figma */
-      native: "targetsTable";
+      native: "targetsTable" | "chatTextField";
     };
 
 export type PrototypeViewerProps = {
@@ -72,13 +75,18 @@ export const PrototypeViewer = ({ prototypes }: PrototypeViewerProps) => {
 
       {"native" in current ? (
         <figure>
-          <p className="mb-2 text-sm text-ink-300">
-            Table interactions prototype for hand off
-          </p>
-          <div className="soft-image-shadow overflow-hidden rounded-xl border border-ink-300/20">
-            {/* key remounts per page so sort state can't leak between prototypes */}
-            <TargetsTable key={current.title} />
-          </div>
+          <p className="mb-2 text-sm text-ink-300">{current.label}</p>
+          {current.native === "targetsTable" ? (
+            <div className="soft-image-shadow overflow-hidden rounded-xl border border-ink-300/20">
+              {/* key remounts per page so sort state can't leak between prototypes */}
+              <TargetsTable key={current.title} />
+            </div>
+          ) : (
+            // a darker stage for the field to sit on, in the same bordered box as the other prototypes
+            <div className="soft-image-shadow flex min-h-[420px] items-center justify-center overflow-hidden rounded-xl border border-ink-300/20 bg-[#0f0f0f] p-6">
+              <ChatTextField key={current.title} />
+            </div>
+          )}
         </figure>
       ) : (
         <figure>

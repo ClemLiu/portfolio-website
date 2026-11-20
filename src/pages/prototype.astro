@@ -6,7 +6,10 @@ import { PrototypeViewer, type Prototype } from "../design-system/components/Pro
 //  - `native`: a prototype rebuilt on the page itself, or
 //  - `figmaUrl`: paste a regular Figma prototype link; it's converted to an
 //    embeddable one below.
-const prototypes: ({ title: string; native: "targetsTable" } | { title: string; figmaUrl: string })[] = [
+const prototypes: (
+	| { title: string; label: string; native: "targetsTable" | "chatTextField" }
+	| { title: string; figmaUrl: string }
+)[] = [
 	{
 		title: "Landing Page Interactions",
 		figmaUrl:
@@ -14,12 +17,18 @@ const prototypes: ({ title: string; native: "targetsTable" } | { title: string; 
 	},
 	{
 		title: "Table Interactions",
+		label: "Table interactions prototype for hand off",
 		native: "targetsTable",
 	},
 	{
 		title: "Vertical nav bar prototype for engineering handoff",
 		figmaUrl:
 			"https://www.figma.com/proto/xOFtqBj6hEdv1OU8gECbud/Prototypes?node-id=123-54378&viewport=469%2C154%2C0.62&t=rkBgOrnqyzP9JM25-1&scaling=scale-down&content-scaling=fixed&page-id=123%3A44284",
+	},
+	{
+		title: "Text Field Interactions",
+		label: "Text field interaction exploration",
+		native: "chatTextField",
 	},
 ];
 
