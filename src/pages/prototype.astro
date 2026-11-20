@@ -10,11 +10,16 @@ const prototypes: ({ title: string; native: "targetsTable" } | { title: string; 
 	{
 		title: "Landing Page Interactions",
 		figmaUrl:
-			"https://www.figma.com/proto/xOFtqBj6hEdv1OU8gECbud/Prototypes?node-id=10-33357&viewport=-349%2C200%2C0.28&t=3zpjNxZMmBth99kR-1&scaling=scale-down-width&content-scaling=fixed&starting-point-node-id=10%3A9988&page-id=0%3A1",
+			"https://www.figma.com/proto/xOFtqBj6hEdv1OU8gECbud/Prototypes?node-id=123-49160&viewport=40%2C201%2C0.41&t=1Lc0SdlVZf1JFzEJ-1&scaling=scale-down-width&content-scaling=fixed&page-id=123%3A44283",
 	},
 	{
 		title: "Table Interactions",
 		native: "targetsTable",
+	},
+	{
+		title: "Vertical nav bar prototype for engineering handoff",
+		figmaUrl:
+			"https://www.figma.com/proto/xOFtqBj6hEdv1OU8gECbud/Prototypes?node-id=123-54378&viewport=469%2C154%2C0.62&t=rkBgOrnqyzP9JM25-1&scaling=scale-down&content-scaling=fixed&page-id=123%3A44284",
 	},
 ];
 
@@ -30,9 +35,9 @@ const items: Prototype[] = prototypes.map((p) =>
 );
 ---
 
-<BaseLayout title="Prototype — Clem" description="A playground of prototypes by Clem.">
+<BaseLayout title="Prototypes — Clem" description="A playground of prototypes by Clem.">
 	<div class="mx-auto max-w-5xl blur-fade-in pb-24">
-		<h1 class="sr-only">Prototype</h1>
+		<h1 class="sr-only">Prototypes</h1>
 		<PrototypeViewer client:load prototypes={items} />
 	</div>
 </BaseLayout>

@@ -83,7 +83,7 @@ export const Nav = ({
             Portfolio
           </a>
           <a href={prototypeHref} className={linkClassFor(path === prototypeHref)} aria-current={path === prototypeHref ? "page" : undefined}>
-            Prototype
+            Prototypes
           </a>
           <a href={aboutHref} className={linkClassFor(path === aboutHref)} aria-current={path === aboutHref ? "page" : undefined}>
             About
