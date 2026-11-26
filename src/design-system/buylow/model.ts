@@ -51,7 +51,7 @@ const ALL_COLUMNS: Column[] = [
     width: 144,
     standard: true,
     sort: (r) => r.fpVs3y,
-    tooltip: "FP/GP in the selected time range minus his FP/GP over the last 3 seasons, with your scoring.",
+    tooltip: "FP/GP in the selected time range minus his FP/GP over the last 3 seasons, weighted toward the most recent, with your scoring.",
   },
   {
     id: "toi",
@@ -59,7 +59,7 @@ const ALL_COLUMNS: Column[] = [
     width: 120,
     standard: true,
     sort: (r) => r.toiVs3y,
-    tooltip: "Change in minutes per game compared with his 3-year average.",
+    tooltip: "Change in minutes per game compared with his 3-year average, weighted toward the most recent season.",
   },
   {
     id: "ppToi",
@@ -67,7 +67,7 @@ const ALL_COLUMNS: Column[] = [
     width: 144,
     standard: true,
     sort: (r) => r.ppToiVs3y,
-    tooltip: "Change in power-play minutes per game compared with his 3-year average.",
+    tooltip: "Change in power-play minutes per game compared with his 3-year average, weighted toward the most recent season.",
   },
   { id: "expGA", label: "Exp G / Exp A", width: 152, standard: false, sort: (r) => r.expG, tooltip: "Expected goals and expected assists in the selected time range. Sorts by expected goals." },
   { id: "sog60", label: "SOG/60", width: 112, standard: false, sort: (r) => r.sog60, tooltip: "Shots on goal per 60 minutes." },

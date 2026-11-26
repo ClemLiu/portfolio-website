@@ -2,7 +2,7 @@
  * rescore.js: the buy-low / sell-high model's scoring maths, for the browser.
  *
  * public/players.json holds base values only (season totals, expected goals/assists/PPP, 3-year
- * totals, ice time, trends, scoring-independent cautions) and the model's league-relative rules.
+ * totals weighted 5:4:3 toward recent seasons, ice time, trends, scoring-independent cautions) and the model's league-relative rules.
  * This module applies a set of fantasy-point values (Yahoo's by default, or the visitor's from
  * FP Settings) and returns everything the table needs: FP/GP, expected FP/GP, FP/GP vs exp and vs 3Y,
  * buy/sell scores, who is listed, verdict, Momentum, cautions and the four row highlights.

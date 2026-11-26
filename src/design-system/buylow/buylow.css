@@ -954,18 +954,18 @@
 .bl-legend {
   background: var(--subtle);
 }
-/* the whole bar opens and closes it */
+/* the whole bar opens and closes it: chevron, name and label on one line, with the note under them */
 .bl-legend-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: 16px auto minmax(0, 1fr);
   align-items: center;
-  gap: 8px;
+  gap: 2px 8px;
   width: 100%;
   min-height: 40px;
   padding: 10px 16px;
   text-align: left;
 }
 .bl-legend-bar > svg {
-  flex: none;
   color: var(--text-2);
 }
 .bl-legend-name {
@@ -976,9 +976,9 @@
   font-size: 13px;
   line-height: 16px;
 }
-/* what decides the levels, shown with the icons; it lines up under "Momentum" */
+/* what decides the levels; it lines up under "Momentum" */
 .bl-legend-note {
-  padding: 2px 16px 0 40px;
+  grid-column: 2 / -1;
   color: var(--muted);
   font-size: 13px;
   line-height: 16px;
@@ -987,7 +987,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px 32px;
-  padding: 12px 16px 10px 40px;
+  padding: 2px 16px 10px 40px;
 }
 .bl-legend-title {
   margin-bottom: 8px;
