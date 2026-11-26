@@ -4,6 +4,7 @@ import {
   COLUMNS,
   DEFAULT_COLUMNS,
   DENSITIES,
+  GAMES,
   MOMENTUM,
   NO_FILTERS,
   POSITIONS,
@@ -196,12 +197,15 @@ const ColumnsSection = ({
 export const FiltersPanel = ({
   filters,
   teams,
+  windows,
   columns,
   density,
   onChange,
 }: {
   filters: Filters;
   teams: string[];
+  /** the games windows the data offers; undefined while it's still loading */
+  windows?: number[];
   columns: ColumnId[];
   density: Density;
   onChange: (next: { filters?: Filters; columns?: ColumnId[]; density?: Density }) => void;
@@ -221,17 +225,25 @@ export const FiltersPanel = ({
         />
       </label>
 
-      {/* in the design, but the data has no game-by-game numbers yet */}
       <div className="bl-field">
         <span className="bl-field-label">Games</span>
         <div className="bl-segmented" role="group" aria-label="Games">
-          {["All", "L5", "L10", "L15", "L20"].map((g) => (
-            <button key={g} type="button" aria-pressed={g === "All"} disabled={g !== "All"} title={g === "All" ? undefined : "Coming with game-by-game data"}>
-              {g}
-            </button>
-          ))}
+          {[null, ...GAMES].map((n) => {
+            const missing = n !== null && windows !== undefined && !windows.includes(n);
+            return (
+              <button
+                key={n ?? "all"}
+                type="button"
+                aria-pressed={filters.games === n}
+                disabled={missing}
+                title={missing ? "Not enough games played yet" : n === null ? "The whole season" : `Each player's last ${n} games`}
+                onClick={() => setFilters({ games: n })}
+              >
+                {n === null ? "All" : `L${n}`}
+              </button>
+            );
+          })}
         </div>
-        <span className="bl-field-note">Last-N games are coming soon.</span>
       </div>
 
       <div className="bl-field">
@@ -311,7 +323,7 @@ const PointsInput = ({ value, label, onChange }: { value: number; label: string;
   );
 };
 
-/** in the design, but not in the data yet */
+/** in the design, but the data doesn't carry them yet */
 const UPCOMING = [
   { label: "Shorthanded pts", abbr: "SHP" },
   { label: "Plus/minus", abbr: "+/-" },
@@ -338,7 +350,7 @@ export const ScoringPanel = ({ weights, onChange }: { weights: Weights; onChange
       <h3 className="bl-overline">Peripherals</h3>
       {(["sog", "hit", "blk", "pim"] as StatKey[]).map(row)}
       <h3 className="bl-overline">Coming soon</h3>
-      <p className="bl-panel-intro">These need game-by-game data, so they don't count yet.</p>
+      <p className="bl-panel-intro">These aren't in the data yet, so they don't count.</p>
       {UPCOMING.map((s) => (
         <div className="bl-stat-weight bl-stat-weight--off" key={s.abbr}>
           <span className="bl-stat-name">{s.label}</span>

@@ -42,7 +42,13 @@ export const BuyLowTool = () => {
         if (!res.ok) throw new Error(String(res.status));
         return res.json();
       })
-      .then(setData)
+      .then((next: PlayersData) => {
+        setData(next);
+        // a link can ask for a games window the data doesn't offer yet (early season): show the season instead
+        setSettings((s) =>
+          s.filters.games && !next.windows?.includes(s.filters.games) ? { ...s, filters: { ...s.filters, games: null } } : s,
+        );
+      })
       .catch(() => setFailed(true));
   }, []);
   useEffect(load, [load]);
@@ -55,17 +61,20 @@ export const BuyLowTool = () => {
     window.history.replaceState(window.history.state, "", url);
   }, [query]);
 
-  // re-score shortly after the last keystroke in FP Settings, not on every one
-  const [scoredWith, setScoredWith] = useState(weights);
+  // re-score shortly after the last change to FP Settings or Games, not on every keystroke
+  const { games } = filters;
+  const [scoredWith, setScoredWith] = useState({ weights, games });
   useEffect(() => {
-    const timer = window.setTimeout(() => setScoredWith(weights), 250);
+    const timer = window.setTimeout(() => setScoredWith({ weights, games }), 250);
     return () => window.clearTimeout(timer);
-  }, [weights]);
-  const updating = data !== null && scoredWith !== weights;
+  }, [weights, games]);
+  const updating = data !== null && (scoredWith.weights !== weights || scoredWith.games !== games);
 
   const rows = useMemo(() => {
     if (!data) return [];
-    const result = rescore(data, scoredWith, { all: true });
+    // rescore.js throws on a window the data doesn't have
+    const offered = scoredWith.games && data.windows?.includes(scoredWith.games) ? scoredWith.games : null;
+    const result = rescore(data, scoredWith.weights, { all: true, games: offered });
     return toRows(result.rows, result.players!);
   }, [data, scoredWith]);
   const teams = useMemo(() => (data ? [...new Set(data.players.map((p) => p.team))].sort() : []), [data]);
@@ -101,6 +110,7 @@ export const BuyLowTool = () => {
   };
 
   const chips = [
+    filters.games !== null && { label: `Games: L${filters.games}`, clear: { games: null } },
     filters.q && { label: `Search: ${filters.q}`, clear: { q: "" } },
     filters.pos.length > 0 && { label: `Pos: ${filters.pos.join(", ")}`, clear: { pos: [] as string[] } },
     filters.teams.length > 0 && {
@@ -173,7 +183,7 @@ export const BuyLowTool = () => {
       </div>
 
       <div className="bl-content">
-        {panel === "filters" && <FiltersPanel filters={filters} teams={teams} columns={columns} density={density} onChange={update} />}
+        {panel === "filters" && <FiltersPanel filters={filters} teams={teams} windows={data ? (data.windows ?? []) : undefined} columns={columns} density={density} onChange={update} />}
         {panel === "scoring" && <ScoringPanel weights={weights} onChange={(w) => update({ weights: w })} />}
 
         <PlayerTable
@@ -189,7 +199,7 @@ export const BuyLowTool = () => {
             <div className="bl-empty">
               <Icon name="search" size={20} />
               <strong>No players match these filters</strong>
-              <p>Try removing a filter.</p>
+              <p>Try removing a filter or picking a different Games range.</p>
               <button type="button" className="bl-button bl-button--small" onClick={() => setFilters(NO_FILTERS)}>
                 Clear filters
               </button>

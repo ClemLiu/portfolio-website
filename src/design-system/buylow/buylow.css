@@ -201,13 +201,9 @@
   flex-direction: column;
   gap: 4px;
 }
-.bl-field-label,
-.bl-field-note {
+.bl-field-label {
   color: var(--muted);
   font: 500 13px/16px "Golos Text", sans-serif;
-}
-.bl-field-note {
-  font-weight: 400;
 }
 .bl-search {
   display: flex;

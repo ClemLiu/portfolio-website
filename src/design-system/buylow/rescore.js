@@ -16,7 +16,10 @@
  *   const custom = rescore(data, { g: 3, a: 2, ppp: 1, sog: 0.5, hit: 0.5, blk: 0.5, pim: 0 });
  *
  * rows = every listed player (buys and sells), sorted from strongest buy to strongest sell.
- * Pass { all: true } as the third argument to also get every skater with his computed values.
+ * Third argument options:
+ *   { games: 10 }  Last 10 games instead of the season (any value in data.windows: 5, 10, 15, 20).
+ *                  Same model on each player's own last N games; players with fewer games are left out.
+ *   { all: true }  also return every skater with their computed values.
  */
 
 const STAT_KEYS = ['g', 'a', 'pim', 'ppp', 'sog', 'hit', 'blk'];   // same order as the Python sums (bit-identical floats)
@@ -112,22 +115,22 @@ function highlights(p, v, w, side, cautionList) {
     label: n, value: fixed(a, 0), delta: signed(a - e), caption: `exp ${fixed(e, 1)}`,
     refLabel: `Exp ${n === 'PPP' ? n : n.toLowerCase()}`, refValue: fixed(e, 1) }));
   hl.push(v.fp3 === null
-    ? { label: 'FP/GP', value: fixed(v.fp, 2), delta: '', caption: 'no 3-year history', refLabel: '3yr FP/GP', refValue: '—' }
-    : { label: 'FP/GP', value: fixed(v.fp, 2), delta: signed(v.vs3y, 2), caption: `3yr ${fixed(v.fp3, 2)}`,
-        refLabel: '3yr FP/GP', refValue: fixed(v.fp3, 2) });
+    ? { label: 'FP/GP', value: fixed(v.fp, 2), delta: '', caption: 'no 3-year history', refLabel: '3Y FP/GP', refValue: '—' }
+    : { label: 'FP/GP', value: fixed(v.fp, 2), delta: signed(v.vs3y, 2), caption: `3Y ${fixed(v.fp3, 2)}`,
+        refLabel: '3Y FP/GP', refValue: fixed(v.fp3, 2) });
   const first = cautionList[0] || '';
   const shPct3 = p.shPct3y, sog3 = p.sog60_3y;
   let h;
   if (first === 'Less TOI' || first === 'More TOI') {
-    h = { label: 'TOI / GP', value: fixed(p.toi, 1), delta: signed(p.toiChg), caption: 'min vs 3yr avg',
-          refLabel: '3yr TOI / GP', refValue: fixed(p.toi - p.toiChg, 1) };
+    h = { label: 'TOI / GP', value: fixed(p.toi, 1), delta: signed(p.toiChg), caption: 'min vs 3Y avg',
+          refLabel: '3Y TOI / GP', refValue: fixed(p.toi - p.toiChg, 1) };
   } else if (first === 'Less PP' || first === 'More PP') {
-    h = { label: 'PP TOI / GP', value: fixed(p.ppToi, 2), delta: signed(p.ppToiChg, 2), caption: 'min vs 3yr avg',
-          refLabel: '3yr PP TOI / GP', refValue: fixed(p.ppToi - p.ppToiChg, 2) };
+    h = { label: 'PP TOI / GP', value: fixed(p.ppToi, 2), delta: signed(p.ppToiChg, 2), caption: 'min vs 3Y avg',
+          refLabel: '3Y PP TOI / GP', refValue: fixed(p.ppToi - p.ppToiChg, 2) };
   } else if (first.startsWith('Hits/blocks')) {
     const hb = (p.season.hit / p.gp) * w.hit + (p.season.blk / p.gp) * w.blk;
-    h = { label: 'Hits + blocks FP/GP', value: fixed(hb, 2), delta: signed(v.hitBlkChg, 2), caption: 'FP/GP vs 3yr avg',
-          refLabel: '3yr avg', refValue: fixed(hb - v.hitBlkChg, 2) };
+    h = { label: 'Hits + blocks FP/GP', value: fixed(hb, 2), delta: signed(v.hitBlkChg, 2), caption: 'FP/GP vs 3Y avg',
+          refLabel: '3Y avg', refValue: fixed(hb - v.hitBlkChg, 2) };
   } else if (first.startsWith('Age')) {
     h = { label: 'Age', value: fixed(p.age, 0), delta: '', caption: side === 'Buy' ? 'past his peak' : 'still improving',
           refLabel: 'Age curve', refValue: side === 'Buy' ? 'Declining' : 'Improving' };
@@ -140,12 +143,12 @@ function highlights(p, v, w, side, cautionList) {
     h = { label: 'Assist share last season', value: tr[tr.length - 1], delta: '', caption: `${p.assistShareTrend} (3 seasons)`,
           refLabel: 'Assist share 3 seasons ago', refValue: tr[0] };
   } else if (first === 'Fewer shots' || first === 'More shots') {
-    h = { label: 'Shots / 60', value: fixed(p.sog60, 1), delta: signed(p.sog60 - sog3), caption: `3yr ${fixed(sog3, 1)}`,
-          refLabel: '3yr shots / 60', refValue: fixed(sog3, 1) };
+    h = { label: 'Shots / 60', value: fixed(p.sog60, 1), delta: signed(p.sog60 - sog3), caption: `3Y ${fixed(sog3, 1)}`,
+          refLabel: '3Y shots / 60', refValue: fixed(sog3, 1) };
   } else {
     h = { label: 'Shooting %', value: `${fixed(p.shPct, 1)}%`, delta: isNum(shPct3) ? signed(p.shPct - shPct3) : '',
-          caption: isNum(shPct3) ? `3yr ${fixed(shPct3, 1)}%` : 'no 3-year history',
-          refLabel: '3yr shooting %', refValue: isNum(shPct3) ? `${fixed(shPct3, 1)}%` : '—' };
+          caption: isNum(shPct3) ? `3Y ${fixed(shPct3, 1)}%` : 'no 3-year history',
+          refLabel: '3Y shooting %', refValue: isNum(shPct3) ? `${fixed(shPct3, 1)}%` : '—' };
   }
   hl.push(h);
   for (const x of hl) x.trend = x.delta.startsWith('+') ? 'Up' : x.delta.startsWith('-') ? 'Down' : 'Neutral';
@@ -156,10 +159,15 @@ function highlights(p, v, w, side, cautionList) {
  * Score every skater under `weights` and build the combined buy/sell list.
  * @returns {{ weights, cutoffs, rows, players? }}
  */
-export function rescore(data, weights = data.defaultScoring.weights, { all = false } = {}) {
+export function rescore(data, weights = data.defaultScoring.weights, { all = false, games = null } = {}) {
   const w = normaliseWeights(weights);
-  const model = data.model;
-  const players = data.players;
+  let model = data.model;
+  let players = data.players;
+  if (games) {                                     // Last N games: each player's own last N, same model
+    if (!(data.windows || []).includes(games)) throw new Error(`No Last ${games} window in this data (has: ${data.windows})`);
+    players = players.filter((p) => p.windows?.[games]).map((p) => ({ ...p, ...p.windows[games] }));
+    model = { ...model, minGp: games };
+  }
   const scored = players.map((p) => score(p, w, model));
   const cut = cutoffsFor(players, scored, model);
 

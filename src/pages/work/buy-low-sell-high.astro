@@ -13,6 +13,15 @@ const updated = new Date(data.generatedAt).toLocaleDateString("en-US", {
 	year: "numeric",
 	timeZone: "America/Toronto",
 });
+// a plain calendar date (YYYYMMDD), so it's formatted in UTC to keep the day from shifting
+const through =
+	data.gamesThrough &&
+	new Date(`${data.gamesThrough.replace(/^(\d{4})(\d{2})(\d{2})$/, "$1-$2-$3")}T00:00:00Z`).toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+		timeZone: "UTC",
+	});
 
 const intro = `I use it this tool to help determine my Yahoo fantasy hockey league moves. The model compares players expected (MoneyPuck) and actual values and current stats to their 3 year averages. This is currently for FP leagues. I don’t know if it works well for categories leagues! Set your leagues FP settings and start using the tool.
 
@@ -33,9 +42,10 @@ Bookmark the page or save the URL to keep your FP settings and filters. You can 
 				<h1>Hot &amp; Cold !</h1>
 				<p>{intro}</p>
 				<p class="bl-source">
-					Data from <a href="https://moneypuck.com" target="_blank" rel="noopener noreferrer">MoneyPuck.com</a>
+					Data from <a href="https://moneypuck.com" target="_blank" rel="noopener noreferrer">MoneyPuck.com</a>{" "}
 					and <a href="https://www.nhl.com" target="_blank" rel="noopener noreferrer">NHL.com</a> (player bios)
 					· {data.seasonLabel} season · Updated {updated}
+					{through && ` · Games through ${through}`}
 				</p>
 			</header>
 			<BuyLowTool client:only="react">

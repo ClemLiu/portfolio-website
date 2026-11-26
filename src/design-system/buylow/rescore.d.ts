@@ -52,13 +52,18 @@ export type PlayersData = {
   sources: { name: string; url: string; used: string }[];
   defaultScoring: { name: string; weights: Weights };
   model: { role: { toi: number; ppToi: number } };
+  /** the Last N games windows the data offers; early in a season some are missing */
+  windows?: number[];
+  /** date of the latest game, YYYYMMDD */
+  gamesThrough?: string;
   players: Skater[];
 };
 
 export function rescore(
   data: PlayersData,
   weights?: Partial<Weights>,
-  options?: { all?: boolean },
+  /** games: score each player's own last N games (one of data.windows) instead of the season */
+  options?: { all?: boolean; games?: number | null },
 ): { weights: Weights; rows: ListedRow[]; players?: Skater[] };
 
 export const YAHOO_DEFAULT: Readonly<Weights>;
