@@ -19,7 +19,7 @@ for (const days of [null, ...data.ranges.map((r) => r.days)]) {
   const { rows } = rescore(data, data.defaultScoring.weights, { days });
   const name = days ? `Last ${days} days` : "Season";
   if (rows.length === 0) fail(`${name} lists nobody`);
-  if (rows.some((r) => !Number.isFinite(r.fpVsExp))) fail(`${name} has players with missing numbers`);
+  if (rows.some((r) => !Number.isFinite(r.fpVsExp) || !Number.isFinite(r.sogGp))) fail(`${name} has players with missing numbers`);
   console.log(`${name}: ${rows.length} players listed`);
 }
 console.log(`OK: ${data.seasonLabel}, updated ${data.generatedAt}, games through ${data.gamesThrough ?? "unknown"}`);

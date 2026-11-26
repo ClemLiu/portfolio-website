@@ -156,6 +156,16 @@ function highlights(p, v, w, side, cautionList) {
   return hl;
 }
 
+/** Shooting columns (More): Sh% and SOG/GP, this season (or range) and vs his weighted 3-year rates. */
+function shooting(p) {
+  const s = p.season, ty = p.threeYear;
+  const shPct = s.sog > 0 ? (s.g / s.sog) * 100 : null;
+  const shPct3y = ty && ty.sog > 0 ? (ty.g / ty.sog) * 100 : null;
+  const sogGp = s.sog / p.gp, sogGp3y = ty ? ty.sog / ty.gp : null;
+  return { shPct, shPct3y, shPctVs3y: shPct !== null && shPct3y !== null ? shPct - shPct3y : null,
+           sogGp, sogGp3y, sogGpVs3y: sogGp3y !== null ? sogGp - sogGp3y : null };
+}
+
 /**
  * Score every skater under `weights` and build the combined buy/sell list.
  * @returns {{ weights, cutoffs, rows, players? }}
@@ -197,6 +207,7 @@ export function rescore(data, weights = data.defaultScoring.weights, { all = fal
         cautions: caut, driver: driver(p, w, side), score: sc,
         fpGp: v.fp, expFpGp: v.expFp, fpVsExp: v.fp - v.expFp, fpVs3y: v.vs3y, fp3y: v.fp3,
         toiVs3y: p.toiChg, ppToiVs3y: p.ppToiChg,
+        ...shooting(p),
         highlights: highlights(p, v, w, side, caut),
       });
     }

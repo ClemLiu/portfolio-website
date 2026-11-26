@@ -23,13 +23,31 @@ const through =
 		timeZone: "UTC",
 	});
 
-const intro = `I use it this tool to help determine my Yahoo fantasy hockey league moves. The model compares players expected (MoneyPuck) and actual values and current stats to their 3 year averages. This is currently for FP leagues. I don’t know if it works well for categories leagues! Set your leagues FP settings and start using the tool.
+const intro = `I use it this tool to help determine my Yahoo fantasy hockey league moves. The model compares players actual stats to expected values (MoneyPuck) and 3 year weighted averages. This is currently only for Yahoo points leagues. Set your leagues FP settings and start using the tool.
 
 Bookmark the page or save the URL to keep your FP settings and filters. You can bookmark multiple settings/filters for different leagues!`;
+
+const description = "A fantasy hockey tool for finding buy-low and sell-high players.";
+// What LinkedIn and other apps show when the page is shared. There's deliberately no og:url, so a shared link
+// keeps the settings in it. The image (1200 x 630, from the data repo's docs/images) is a fixed illustration;
+// give a new one a new file name, as apps cache it.
+const share = {
+	title: "Hot & Cold, find hidden value on your fantasy hockey team!",
+	image: "https://www.heyclem.ca/og/social-preview.png",
+	imageAlt: "Who’s hot? Who’s cold? Fantasy hockey skaters scoring above or below their expected values",
+};
 ---
 
-<BaseLayout title="Hot & Cold ! — Clem" description="A fantasy hockey tool for finding buy-low and sell-high players.">
+<BaseLayout title="Hot & Cold ! — Clem" description={description}>
 	<Fragment slot="head">
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={share.title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={share.image} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={share.imageAlt} />
+		<meta name="twitter:card" content="summary_large_image" />
 		<link
 			href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Geist+Mono:wght@400;600&display=swap"
 			rel="stylesheet"

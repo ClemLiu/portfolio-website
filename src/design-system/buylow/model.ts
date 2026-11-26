@@ -3,7 +3,7 @@ import { YAHOO_DEFAULT, type ListedRow, type PlayersData, type StatKey, type Wei
 // Everything the visitor can change, how it's kept in the page URL, and how rows are filtered and sorted.
 
 /** a listed player plus the extra values behind the optional columns */
-export type Row = ListedRow & { key: string; expG: number; expA: number; sog60: number; gxgTrend: string };
+export type Row = ListedRow & { key: string; sog60: number; gxgTrend: string };
 
 export const POSITIONS = ["F", "C", "L", "R", "D"] as const;
 /** F is a shortcut for the three forward positions; it's never stored in the filters itself */
@@ -15,7 +15,21 @@ export const DENSITIES = ["compact", "default", "comfortable"] as const;
 export type Density = (typeof DENSITIES)[number];
 export const ROW_HEIGHT: Record<Density, number> = { compact: 32, default: 40, comfortable: 48 };
 
-export type ColumnId = "fpGp" | "expFpGp" | "vsExp" | "vs3y" | "toi" | "ppToi" | "gp" | "expGA" | "sog60" | "gxg" | "cautions";
+export type ColumnId =
+  | "gp"
+  | "fpGp"
+  | "expFpGp"
+  | "vsExp"
+  | "vs3y"
+  | "toi"
+  | "ppToi"
+  | "shPct"
+  | "shPctVs3y"
+  | "sogGp"
+  | "sogGpVs3y"
+  | "sog60"
+  | "gxg"
+  | "cautions";
 
 export type Column = {
   id: ColumnId;
@@ -27,13 +41,18 @@ export type Column = {
   sort?: (r: Row) => number | null;
   /** explains the column; gives its header a dotted underline */
   tooltip?: string;
+  /** for a long explanation that needs a wider tooltip than usual */
+  tooltipWidth?: number;
 };
 
-/** the optional ("More") columns are switched off for now; set this to true to offer them again */
-const OFFER_MORE_COLUMNS = false;
+/** G/xG in his most recent season, the last value in the trend; null where there were too few chances to judge */
+const latestRatio = (trend: string) => {
+  const latest = Number(trend.split("→").pop());
+  return Number.isFinite(latest) ? latest : null;
+};
 
-/** in table order; cautions stays last because it stretches to fill the row */
-const ALL_COLUMNS: Column[] = [
+/** in table order; cautions stays last because it stretches to fill the row. Tooltip wording is the brief's. */
+export const COLUMNS: Column[] = [
   { id: "gp", label: "GP", width: 64, standard: true, sort: (r) => r.gp },
   { id: "fpGp", label: "FP/GP", width: 96, standard: true, sort: (r) => r.fpGp },
   { id: "expFpGp", label: "Exp FP/GP", width: 128, standard: true, sort: (r) => r.expFpGp },
@@ -43,7 +62,7 @@ const ALL_COLUMNS: Column[] = [
     width: 152,
     standard: true,
     sort: (r) => r.fpVsExp,
-    tooltip: "FP/GP minus expected FP/GP. Negative means he's scoring below what his play supports; positive means above it.",
+    tooltip: "Actual FP/GP minus expected FP/GP. Negative: scoring below his underlying play (buy). Positive: above it (sell).",
   },
   {
     id: "vs3y",
@@ -51,7 +70,7 @@ const ALL_COLUMNS: Column[] = [
     width: 144,
     standard: true,
     sort: (r) => r.fpVs3y,
-    tooltip: "FP/GP in the selected time range minus his FP/GP over the last 3 seasons, weighted toward the most recent, with your scoring.",
+    tooltip: "FP/GP minus his last 3 seasons, weighted toward the most recent.",
   },
   {
     id: "toi",
@@ -59,7 +78,7 @@ const ALL_COLUMNS: Column[] = [
     width: 120,
     standard: true,
     sort: (r) => r.toiVs3y,
-    tooltip: "Change in minutes per game compared with his 3-year average, weighted toward the most recent season.",
+    tooltip: "Minutes per game minus his last 3 seasons, weighted toward the most recent.",
   },
   {
     id: "ppToi",
@@ -67,17 +86,41 @@ const ALL_COLUMNS: Column[] = [
     width: 144,
     standard: true,
     sort: (r) => r.ppToiVs3y,
-    tooltip: "Change in power-play minutes per game compared with his 3-year average, weighted toward the most recent season.",
+    tooltip: "Minutes per game on the power play minus his last 3 seasons, weighted toward the most recent.",
   },
-  { id: "expGA", label: "Exp G / Exp A", width: 152, standard: false, sort: (r) => r.expG, tooltip: "Expected goals and expected assists in the selected time range. Sorts by expected goals." },
-  { id: "sog60", label: "SOG/60", width: 112, standard: false, sort: (r) => r.sog60, tooltip: "Shots on goal per 60 minutes." },
-  { id: "gxg", label: "G/xG trend", width: 200, standard: false, tooltip: "Goals compared with expected goals in each of the last 3 seasons, oldest first." },
+  { id: "shPct", label: "Sh%", width: 88, standard: false, sort: (r) => r.shPct },
+  {
+    id: "shPctVs3y",
+    label: "Sh% vs 3Y",
+    width: 120,
+    standard: false,
+    sort: (r) => r.shPctVs3y,
+    tooltip: "Shooting % minus his last 3 seasons, in percentage points.",
+  },
+  { id: "sogGp", label: "SOG/GP", width: 96, standard: false, sort: (r) => r.sogGp },
+  {
+    id: "sogGpVs3y",
+    label: "SOG/GP vs 3Y",
+    width: 144,
+    standard: false,
+    sort: (r) => r.sogGpVs3y,
+    tooltip: "Shots on goal per game minus his last 3 seasons.",
+  },
+  { id: "sog60", label: "SOG/60", width: 96, standard: false, sort: (r) => r.sog60 },
+  {
+    id: "gxg",
+    label: "G/xG trend",
+    width: 184,
+    standard: false,
+    sort: (r) => latestRatio(r.gxgTrend),
+    tooltip:
+      "Goals ÷ expected goals in each of his last 3 seasons, oldest first. Above 1.00: he finished better than his chances. Below 1.00: worse. — means too few chances to judge.",
+    tooltipWidth: 296,
+  },
   { id: "cautions", label: "Cautions", width: 328, standard: true },
 ];
 
-/** the columns the table and the Columns section know about */
-export const COLUMNS = ALL_COLUMNS.filter((c) => c.standard || OFFER_MORE_COLUMNS);
-
+/** shown until the visitor changes them; the rest are the "More" columns */
 export const DEFAULT_COLUMNS: ColumnId[] = COLUMNS.filter((c) => c.standard).map((c) => c.id);
 
 export type SortKey = "name" | ColumnId;
@@ -205,7 +248,7 @@ export const toRows = (listed: ListedRow[], skaters: PlayersData["players"]): Ro
   return listed.map((r) => {
     const p = byId.get(r.id)!;
     // a player can be listed once as a buy and once as a sell, so the side is part of the key
-    return { ...r, key: `${r.id}-${r.side}`, expG: p.exp.g, expA: p.exp.a, sog60: p.sog60, gxgTrend: p.gxgTrend };
+    return { ...r, key: `${r.id}-${r.side}`, sog60: p.sog60, gxgTrend: p.gxgTrend };
   });
 };
 

@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 /** what to say, and the point to hang under: the middle of the trigger's bottom edge, in window coordinates */
-export type Tip = { title: string; text: string; x: number; y: number };
+export type Tip = { title: string; text: string; x: number; y: number; width?: number };
 
 /** the gap under the trigger, which holds the arrow, and the least space to the window's sides */
 const GAP = 8;
@@ -29,6 +29,8 @@ export const Tooltip = ({ tip }: { tip: Tip | null }) => {
       showing.current = false;
       return;
     }
+    // most explanations wrap at the width in buylow.css; a long one can ask for more
+    content.current.style.maxWidth = tip.width ? `${tip.width}px` : "";
     const { offsetWidth: width, offsetHeight: height } = content.current;
     const x = Math.max(GAP, Math.min(tip.x - width / 2, document.documentElement.clientWidth - width - GAP));
     const jump = !showing.current;

@@ -55,8 +55,14 @@ const cell = (column: Column, r: Row, role: RoleThresholds): ReactNode => {
       return <Change value={r.ppToiVs3y} digits={2} threshold={role.ppToi} />;
     case "gp":
       return <span className="bl-num">{r.gp}</span>;
-    case "expGA":
-      return <span className="bl-num">{`${num(r.expG, 1)} / ${num(r.expA, 1)}`}</span>;
+    case "shPct":
+      return <span className="bl-num">{r.shPct === null ? "—" : `${num(r.shPct, 1)}%`}</span>;
+    case "shPctVs3y":
+      return <span className="bl-num">{signed(r.shPctVs3y, 1)}</span>;
+    case "sogGp":
+      return <span className="bl-num">{num(r.sogGp, 2)}</span>;
+    case "sogGpVs3y":
+      return <span className="bl-num">{signed(r.sogGpVs3y, 2)}</span>;
     case "sog60":
       return <span className="bl-num">{num(r.sog60, 1)}</span>;
     case "gxg":
@@ -74,6 +80,7 @@ const HeaderCell = ({
   sortKey,
   sort,
   tooltip,
+  tooltipWidth,
   className,
   style,
   onSort,
@@ -83,6 +90,7 @@ const HeaderCell = ({
   sortKey?: SortKey;
   sort: Sort;
   tooltip?: string;
+  tooltipWidth?: number;
   className: string;
   style?: CSSProperties;
   onSort: (key: SortKey) => void;
@@ -92,7 +100,7 @@ const HeaderCell = ({
   const show = (el: HTMLElement) => {
     if (!tooltip) return;
     const box = el.getBoundingClientRect();
-    onTip({ title: label, text: tooltip, x: box.left + box.width / 2, y: box.bottom });
+    onTip({ title: label, text: tooltip, width: tooltipWidth, x: box.left + box.width / 2, y: box.bottom });
   };
   const icon = sortKey && <Icon name={active ? (sort.dir === "asc" ? "arrow-up" : "arrow-down") : "sort"} size={12} />;
   const text = <span className={tooltip ? "bl-header-label bl-header-label--tip" : "bl-header-label"}>{label}</span>;
@@ -335,6 +343,7 @@ export const PlayerTable = ({
                 sortKey={c.sort ? c.id : undefined}
                 sort={sort}
                 tooltip={c.tooltip}
+                tooltipWidth={c.tooltipWidth}
                 className={cellClass(c)}
                 style={cellStyle(c)}
                 onSort={onSort}

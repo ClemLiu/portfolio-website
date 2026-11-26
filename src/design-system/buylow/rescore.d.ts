@@ -33,6 +33,14 @@ export type ListedRow = {
   fp3y: number | null;
   toiVs3y: number | null;
   ppToiVs3y: number | null;
+  /** shooting %, this season or range, and its difference from the weighted 3-year rate (percentage points) */
+  shPct: number | null;
+  shPct3y: number | null;
+  shPctVs3y: number | null;
+  /** shots on goal per game, and its difference from the weighted 3-year rate */
+  sogGp: number;
+  sogGp3y: number | null;
+  sogGpVs3y: number | null;
   highlights: Highlight[];
 };
 
