@@ -6,7 +6,8 @@ import { Tag } from "../../design-system/components/Tag";
 import { ExpandableImage } from "../../design-system/components/ExpandableImage";
 
 export async function getStaticPaths() {
-  const entries = await getCollection("caseStudies");
+  // entries with their own page are only here for their home page card
+  const entries = await getCollection("caseStudies", ({ data }) => !data.customPage);
   return entries.map((entry) => ({
     params: { slug: entry.id },
     props: { entry },

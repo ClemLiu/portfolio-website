@@ -1,0 +1,1007 @@
+/* The Buy Low / Sell High tool. Values are the dark-theme tokens, type styles and component sizes from the
+   "Buy Low Sell High" Figma file. */
+
+/* also used by the tooltip and toast, which render outside the tool */
+.bl-tokens {
+  --canvas: #12100f;
+  --surface: #12100f;
+  --raised: #221f1c;
+  --subtle: #1a1816;
+  --hover: #221f1c;
+  --selected: #18235a;
+  --inverse: #ffffff;
+  --border: #2f2c28;
+  --border-strong: #5d5851;
+  --focus: #5d7bff;
+  --text: #f9f8f6;
+  --text-2: #c9c4bc;
+  --muted: #7d776f;
+  --disabled: #5d5851;
+  --buy-fg: #a4bafd;
+  --buy-bg: #18235a;
+  --sell-fg: #fd9b93;
+  --sell-bg: #520a0c;
+  --warn-fg: #ffcf7a;
+  --warn-bg: #4a2f06;
+  color-scheme: dark;
+  color: var(--text);
+  font: 400 14px/20px "Golos Text", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* 1px ring inside the edge, with a 2px gap */
+.bl-tokens :focus-visible {
+  outline: 1px solid var(--focus);
+  outline-offset: -3px;
+}
+
+.bl button:not(:disabled):not([aria-disabled="true"]),
+.bl .bl-check {
+  cursor: pointer;
+}
+
+/* ---------- page header (above the box) ---------- */
+.bl-intro {
+  margin-bottom: 24px;
+}
+.bl-intro h1 {
+  font: 600 20px/28px "Golos Text", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.005em;
+}
+.bl-intro > p {
+  max-width: 720px;
+  margin-top: 8px;
+  color: var(--text-2);
+  white-space: pre-line;
+}
+.bl-intro .bl-source {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 16px;
+}
+.bl-source a,
+.bl-detail-note a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.bl-source a:hover,
+.bl-detail-note a:hover {
+  color: var(--text-2);
+}
+
+/* ---------- layout ---------- */
+.bl {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.bl-content {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+}
+
+/* ---------- toolbar ---------- */
+.bl-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  min-height: 44px;
+}
+.bl-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.bl-separator {
+  width: 1px;
+  height: 24px;
+  background: var(--border);
+}
+.bl-toolbar-label {
+  color: var(--muted);
+  font: 500 13px/16px "Golos Text", sans-serif;
+}
+.bl-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  background: var(--raised);
+  font: 500 14px/16px "Golos Text", sans-serif;
+  white-space: nowrap;
+}
+.bl-button > svg {
+  color: var(--text-2);
+}
+.bl-button:hover {
+  background: #2f2c28;
+}
+.bl-button[aria-expanded="true"] {
+  background: var(--selected);
+  border-color: var(--focus);
+  color: var(--buy-fg);
+}
+.bl-button[aria-expanded="true"] > svg {
+  color: var(--buy-fg);
+}
+.bl-button--ghost,
+.bl-button--small {
+  height: 28px;
+  padding: 0 8px;
+  font-size: 13px;
+}
+.bl-button--ghost {
+  background: transparent;
+}
+.bl-clear {
+  margin-left: auto;
+}
+/* the toolbar's groups sit 16 apart; the applied filters within their group sit 8 apart */
+.bl-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.bl-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  background: var(--selected);
+  color: var(--buy-fg);
+  font: 500 13px/16px "Golos Text", sans-serif;
+}
+.bl-filter-chip:hover {
+  background: #253484;
+}
+
+/* ---------- side panels ---------- */
+.bl-panel {
+  display: flex;
+  flex-direction: column;
+  flex: none;
+  gap: 16px;
+  width: 256px;
+  padding: 16px;
+  background: var(--subtle);
+}
+.bl-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 28px;
+}
+.bl-panel-title {
+  font: 600 14px/20px "Golos Text", sans-serif;
+}
+.bl-panel-intro {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 20px;
+}
+.bl-overline {
+  padding-top: 6px;
+  color: var(--muted);
+  font: 600 13px/16px "Golos Text", sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+/* the Columns section at the bottom of the Filters panel */
+.bl-panel-divider {
+  height: 1px;
+  background: var(--border);
+}
+.bl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bl-field-label,
+.bl-field-note {
+  color: var(--muted);
+  font: 500 13px/16px "Golos Text", sans-serif;
+}
+.bl-field-note {
+  font-weight: 400;
+}
+.bl-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+}
+.bl-search:focus-within {
+  border-color: var(--focus);
+}
+.bl-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+}
+.bl-search input::placeholder {
+  color: var(--muted);
+}
+.bl-segmented {
+  display: flex;
+  gap: 4px;
+  height: 36px;
+  padding: 3px;
+  border: 1px solid var(--border);
+}
+.bl-segmented button {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid transparent;
+  color: var(--text-2);
+  font: 500 13px/16px "Golos Text", sans-serif;
+}
+.bl-segmented button[aria-pressed="true"] {
+  background: var(--raised);
+  border-color: var(--border);
+  color: var(--text);
+}
+.bl-segmented button:disabled {
+  color: var(--disabled);
+}
+.bl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.bl-chips--even .bl-chip {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+}
+.bl-chip {
+  height: 36px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  background: var(--raised);
+  font: 500 14px/16px "Golos Text", sans-serif;
+}
+.bl-chip:hover {
+  background: #2f2c28;
+}
+.bl-chip[aria-pressed="true"] {
+  background: var(--selected);
+  border-color: var(--focus);
+  color: var(--buy-fg);
+}
+
+.bl-select {
+  position: relative;
+}
+.bl-select-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--raised);
+  font: 500 13px/16px "Golos Text", sans-serif;
+}
+.bl-menu {
+  position: absolute;
+  z-index: 20;
+  top: 40px;
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 4px;
+  border: 1px solid var(--border);
+  background: var(--raised);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.bl-menu .bl-check {
+  flex: none;
+  height: 32px;
+  padding: 0 8px;
+}
+.bl-menu .bl-check:hover {
+  background: #2f2c28;
+}
+/* a pick-one item (no checkbox): filled when selected, with a tick at the end */
+.bl-menu-item {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: 13px;
+  line-height: 20px;
+}
+.bl-menu-item:hover {
+  background: #2f2c28;
+}
+.bl-menu-item[aria-pressed="true"] {
+  background: var(--selected);
+}
+.bl-menu-item > svg {
+  color: var(--buy-fg);
+}
+.bl-menu-divider {
+  flex: none;
+  height: 1px;
+  background: var(--border);
+}
+
+.bl-check {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 20px;
+}
+.bl-check input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+.bl-check-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+}
+.bl-check input:checked + .bl-check-box {
+  border-color: var(--inverse);
+  background: var(--inverse);
+  color: var(--canvas);
+}
+.bl-check input:focus-visible + .bl-check-box {
+  outline: 1px solid var(--focus);
+  outline-offset: 2px;
+}
+.bl .bl-check:has(input:disabled) {
+  color: var(--disabled);
+  cursor: default;
+}
+.bl-check input:disabled + .bl-check-box {
+  border-color: var(--raised);
+  background: var(--raised);
+  color: var(--disabled);
+}
+
+.bl-stat-weight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+}
+.bl-stat-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+.bl-stat-abbr {
+  color: var(--muted);
+  font-family: "Geist Mono", ui-monospace, monospace;
+}
+.bl-points {
+  width: 64px;
+  height: 36px;
+  padding: 0 16px 0 4px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: "Geist Mono", ui-monospace, monospace;
+  text-align: right;
+}
+.bl-points:focus {
+  border-color: var(--focus);
+  outline: none;
+}
+.bl-stat-weight--off .bl-stat-name,
+.bl-stat-weight--off .bl-points {
+  color: var(--disabled);
+}
+
+/* ---------- table ---------- */
+.bl-grid {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  border-top: 1px solid var(--border);
+}
+.bl-head {
+  position: sticky;
+  z-index: 5;
+  top: 0;
+  background: var(--surface);
+}
+.bl-head-scroller {
+  overflow: hidden;
+}
+.bl-row {
+  position: relative;
+  display: flex;
+  height: var(--bl-row);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.bl-cell {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  white-space: nowrap;
+}
+.bl-cell--number {
+  justify-content: flex-end;
+}
+.bl-cell--expand {
+  justify-content: center;
+  width: var(--bl-expand);
+  padding: 0;
+}
+.bl-cell--player {
+  width: var(--bl-player);
+}
+.bl-pin {
+  position: sticky;
+  z-index: 2;
+  background: inherit;
+}
+.bl-cell--expand.bl-pin {
+  left: 0;
+}
+.bl-cell--player.bl-pin {
+  left: var(--bl-expand);
+}
+.bl-header-cell {
+  padding: 0;
+}
+.bl-header-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  padding: 0 16px;
+  color: var(--muted);
+  font: 600 13px/16px "Golos Text", sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.bl-cell--number .bl-header-button,
+.bl-header-cell:last-child .bl-header-button {
+  justify-content: flex-end;
+}
+.bl-header-cell:last-child:not(.bl-cell--number) .bl-header-button {
+  justify-content: flex-start;
+}
+.bl-header-button:not([aria-disabled="true"]):hover {
+  background: var(--hover);
+}
+.bl-header-button--active {
+  color: var(--text);
+}
+.bl-header-label--tip {
+  text-decoration: underline dotted;
+  text-underline-offset: 4px;
+}
+
+.bl-body-wrap {
+  position: relative;
+}
+.bl-body {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.bl-body::-webkit-scrollbar {
+  display: none;
+}
+.bl-rows {
+  transition: opacity 150ms ease;
+}
+.bl-rows--updating {
+  opacity: 0.5;
+}
+/* hovering draws a dashed outline; a clicked row stays filled */
+.bl-row--body::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  inset: 0 0 -1px;
+  border: 1px dashed var(--warn-fg);
+  opacity: 0;
+  pointer-events: none;
+}
+.bl-row--body:hover::after {
+  opacity: 1;
+}
+.bl-row--selected {
+  background: var(--hover);
+}
+.bl-expand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: var(--muted);
+}
+.bl-expand:hover {
+  color: var(--text);
+}
+
+.bl-momentum {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  color: var(--muted);
+}
+.bl-momentum--buy {
+  color: var(--buy-fg);
+}
+.bl-momentum--sell {
+  color: var(--sell-fg);
+}
+.bl-momentum--buy.bl-momentum--solid {
+  background: var(--buy-bg);
+}
+.bl-momentum--sell.bl-momentum--solid {
+  background: var(--sell-bg);
+}
+.bl-momentum--severe {
+  border-color: var(--warn-fg);
+}
+.bl-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.bl-name-main {
+  overflow: hidden;
+  font-weight: 500;
+  text-overflow: ellipsis;
+}
+.bl-name-meta {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 16px;
+}
+/* a 32px row only has room for one line */
+.bl-grid--compact .bl-momentum {
+  width: 24px;
+  height: 24px;
+}
+.bl-grid--compact .bl-name-meta {
+  display: none;
+}
+
+.bl-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font: 400 14px/20px "Geist Mono", ui-monospace, monospace;
+}
+.bl-num--strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.bl-num--warn {
+  color: var(--warn-fg);
+}
+.bl-badges {
+  display: flex;
+  gap: 4px;
+}
+.bl-badge {
+  height: 20px;
+  padding: 0 8px;
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+  font: 500 13px/20px "Golos Text", sans-serif;
+}
+
+/* stays in view while the columns scroll sideways */
+.bl-detail {
+  position: sticky;
+  left: 0;
+  display: flex;
+  gap: 16px;
+  box-sizing: border-box;
+  width: var(--bl-view);
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--subtle);
+}
+.bl-detail-title {
+  align-self: center;
+  color: var(--text-2);
+  font: 600 20px/28px "Golos Text", sans-serif;
+  letter-spacing: -0.005em;
+  transform: rotate(180deg);
+  writing-mode: vertical-rl;
+}
+.bl-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+}
+.bl-stat {
+  display: flex;
+  flex-direction: column;
+}
+.bl-stat dt,
+.bl-detail-label {
+  color: var(--muted);
+  font: 600 13px/16px "Golos Text", sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.bl-stat dd {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font: 600 16px/24px "Golos Text", sans-serif;
+}
+.bl-stat-value {
+  margin-bottom: 4px !important;
+}
+.bl-stat--up .bl-stat-arrow,
+.bl-stat--up .bl-stat-ref {
+  color: var(--buy-fg);
+}
+.bl-stat--down .bl-stat-arrow,
+.bl-stat--down .bl-stat-ref {
+  color: var(--sell-fg);
+}
+.bl-stat-arrow {
+  display: flex;
+}
+.bl-detail-cautions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+/* a little looser than in the table, and free to wrap */
+.bl-detail-cautions .bl-badges {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.bl-detail-note {
+  margin-top: 16px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+/* ---------- horizontal scrolling ---------- */
+.bl-hint {
+  position: absolute;
+  z-index: 4;
+  top: calc(50% - 14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--surface);
+  color: var(--text-2);
+}
+.bl-hint:hover {
+  background: var(--hover);
+}
+.bl-hint--left {
+  left: calc(var(--bl-expand) + var(--bl-player) + 8px);
+}
+.bl-hint--right {
+  right: 8px;
+}
+.bl-fade {
+  position: absolute;
+  z-index: 4;
+  top: 0;
+  bottom: 0;
+  width: 56px;
+  pointer-events: none;
+}
+.bl-fade--right {
+  right: 0;
+  background: linear-gradient(90deg, rgba(18, 16, 15, 0), rgba(18, 16, 15, 0.78) 60%, rgba(18, 16, 15, 0.92));
+}
+.bl-fade--left {
+  left: calc(var(--bl-expand) + var(--bl-player));
+  border-left: 1px solid var(--border);
+  background: linear-gradient(270deg, rgba(18, 16, 15, 0), rgba(18, 16, 15, 0.78) 60%, rgba(18, 16, 15, 0.92));
+}
+/* sticks to the bottom of the window, so it's reachable without scrolling to the end of the table */
+.bl-scrollbar {
+  position: sticky;
+  z-index: 5;
+  bottom: 0;
+  height: 12px;
+  margin-top: -12px;
+  touch-action: none;
+  cursor: pointer;
+  /* fades out when idle (see PlayerTable.tsx), and slowly enough to notice; comes back quickly */
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+.bl-scrollbar--visible,
+.bl-scrollbar:hover {
+  opacity: 1;
+  transition-duration: 150ms;
+}
+.bl-scrollbar:hover {
+  background: var(--subtle);
+}
+.bl-scrollbar-thumb {
+  position: absolute;
+  top: 3px;
+  height: 6px;
+  background: var(--border-strong);
+}
+.bl-scrollbar:hover .bl-scrollbar-thumb {
+  top: 2px;
+  height: 8px;
+  background: var(--muted);
+}
+
+/* ---------- footer ---------- */
+.bl-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  min-height: 48px;
+  margin-top: auto;
+  padding: 8px 16px;
+  border-top: 1px solid var(--border);
+}
+.bl-summary {
+  margin-right: auto;
+  color: var(--text-2);
+  font-size: 13px;
+}
+.bl-per-page {
+  width: 144px;
+}
+.bl-per-page .bl-menu {
+  top: auto;
+  bottom: 40px;
+}
+.bl-pagination {
+  display: flex;
+  gap: 4px;
+}
+.bl-pagination > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 28px;
+  color: var(--text-2);
+  font: 500 13px/16px "Golos Text", sans-serif;
+}
+.bl-pagination button:hover:not(:disabled) {
+  background: var(--hover);
+}
+.bl-pagination button[aria-current="page"] {
+  background: var(--selected);
+  color: var(--text);
+}
+.bl-pagination button:disabled {
+  color: var(--disabled);
+}
+
+/* ---------- hot / cold legend ---------- */
+.bl-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.bl-legend-title {
+  margin-bottom: 12px;
+  color: var(--muted);
+  font: 600 13px/16px "Golos Text", sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.bl-legend-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px 40px;
+}
+.bl-legend-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  max-width: 320px;
+}
+.bl-legend-item dt {
+  font: 500 13px/16px "Golos Text", sans-serif;
+}
+.bl-legend-item dd {
+  margin-top: 4px;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+/* ---------- empty, loading, tooltip, toast ---------- */
+.bl-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 40px 24px;
+  min-height: 392px;
+  justify-content: center;
+  text-align: center;
+}
+.bl-empty > svg {
+  color: var(--muted);
+}
+.bl-empty strong {
+  font-weight: 600;
+}
+.bl-empty p {
+  color: var(--text-2);
+  font-size: 13px;
+}
+.bl-skeleton {
+  display: block;
+  height: 12px;
+  background: var(--hover);
+  animation: bl-shimmer 1.4s ease-in-out infinite;
+}
+.bl-skeleton--icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+}
+.bl-skeleton-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.bl-grid--compact .bl-skeleton--icon {
+  width: 24px;
+  height: 24px;
+}
+.bl-grid--compact .bl-skeleton-stack .bl-skeleton + .bl-skeleton {
+  display: none;
+}
+@keyframes bl-shimmer {
+  50% {
+    opacity: 0.45;
+  }
+}
+.bl-progress {
+  position: absolute;
+  z-index: 6;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  overflow: hidden;
+}
+.bl-progress::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  background: var(--focus);
+  animation: bl-progress 1.1s linear infinite;
+}
+@keyframes bl-progress {
+  from {
+    left: -120px;
+  }
+  to {
+    left: 100%;
+  }
+}
+.bl-tooltip {
+  position: fixed;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: max-content;
+  max-width: 248px;
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--inverse);
+  color: var(--canvas);
+  font-size: 13px;
+  line-height: 16px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.bl-tooltip::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: calc(50% - 6px);
+  border: 6px solid transparent;
+  border-top: 0;
+  border-bottom: 8px solid var(--inverse);
+}
+.bl-toast {
+  position: fixed;
+  z-index: 50;
+  bottom: 24px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  background: var(--raised);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+  transform: translateX(-50%);
+}
+
+/* ---------- narrow screens ---------- */
+@media (max-width: 899.98px) {
+  .bl-content {
+    flex-direction: column;
+  }
+  .bl-panel {
+    box-sizing: border-box;
+    width: 100%;
+  }
+  .bl-separator,
+  .bl-toolbar-label {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bl-skeleton,
+  .bl-progress::after {
+    animation: none;
+  }
+  .bl-progress::after {
+    width: 100%;
+  }
+  .bl-rows {
+    transition: none;
+  }
+}

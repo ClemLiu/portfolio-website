@@ -12,7 +12,8 @@
     "astro": "astro",
     "data:targets": "node scripts/build-targets-data.mjs",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "data:buylow": "sh scripts/sync-buylow.sh"
   },
   "dependencies": {
     "@astrojs/mdx": "^7.0.5",

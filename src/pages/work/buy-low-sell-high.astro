@@ -1,0 +1,46 @@
+---
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { BuyLowTool } from "../../design-system/buylow/BuyLowTool";
+import "../../design-system/buylow/buylow.css";
+
+// read at build time for the header; the tool fetches the same file in the browser
+const data = JSON.parse(readFileSync(join(process.cwd(), "public/data/players.json"), "utf8"));
+const updated = new Date(data.generatedAt).toLocaleDateString("en-US", {
+	month: "short",
+	day: "numeric",
+	year: "numeric",
+	timeZone: "America/Toronto",
+});
+
+const intro = `I use it this tool to help determine my Yahoo fantasy hockey league moves. The model compares players expected (MoneyPuck) and actual values and current stats to their 3 year averages. This is currently for FP leagues. I don’t know if it works well for categories leagues! Set your leagues FP settings and start using the tool.
+
+Bookmark the page or save the URL to keep your FP settings and filters. You can bookmark multiple settings/filters for different leagues!`;
+---
+
+<BaseLayout title="Hot & Cold ! — Clem" description="A fantasy hockey tool for finding buy-low and sell-high players.">
+	<Fragment slot="head">
+		<link
+			href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Geist+Mono:wght@400;600&display=swap"
+			rel="stylesheet"
+		/>
+	</Fragment>
+	<div class="blur-fade-in pb-24">
+		<!-- overflow-clip rounds the corners without becoming a scroll container, so the table header can stick -->
+		<div class="soft-image-shadow overflow-clip rounded-xl border border-ink-300/20 bg-[#12100f] p-3 md:p-6">
+			<header class="bl-tokens bl-intro">
+				<h1>Hot &amp; Cold !</h1>
+				<p>{intro}</p>
+				<p class="bl-source">
+					Data from <a href="https://moneypuck.com" target="_blank" rel="noopener noreferrer">MoneyPuck.com</a>
+					and <a href="https://www.nhl.com" target="_blank" rel="noopener noreferrer">NHL.com</a> (player bios)
+					· {data.seasonLabel} season · Updated {updated}
+				</p>
+			</header>
+			<BuyLowTool client:only="react">
+				<div slot="fallback" class="bl-tokens min-h-[520px]">Loading players…</div>
+			</BuyLowTool>
+		</div>
+	</div>
+</BaseLayout>

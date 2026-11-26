@@ -16,6 +16,8 @@ const caseStudies = defineCollection({
       homeImageAlt: z.string(),
       /** controls homepage grid order, lower first; defaults to alphabetical by slug if omitted */
       order: z.number().optional(),
+      /** true when the entry has its own page in src/pages/work/ instead of using the article template */
+      customPage: z.boolean().optional(),
     }),
 });
 

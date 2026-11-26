@@ -29,6 +29,7 @@ const { title, description } = Astro.props;
 			href="https://fonts.googleapis.com/css2?family=Jua&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=block"
 			rel="stylesheet"
 		/>
+		<slot name="head" />
 		<script is:inline>
 			// Runs synchronously before body paints. If the visitor has already
 			// seen the entrance animation this session, skip it on this page
