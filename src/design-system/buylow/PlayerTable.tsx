@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from "react";
 import { Icon } from "./icons";
+import { Accordion } from "./Accordion";
 import { MomentumIcon } from "./Momentum";
 import { Tooltip, type Tip } from "./Tooltip";
 import { ROW_HEIGHT, type Column, type Density, type Row, type Sort, type SortKey } from "./model";
@@ -388,7 +389,8 @@ export const PlayerTable = ({
                               setOpen((o) => (expanded ? o.filter((k) => k !== r.key) : [...o, r.key]));
                             }}
                           >
-                            <Icon name={expanded ? "chevron-down" : "chevron-right"} />
+                            {/* turned to point down when open (see .bl-expand in buylow.css) */}
+                            <Icon name="chevron-right" />
                           </button>
                         </div>
                         <div className="bl-cell bl-cell--player bl-pin" role="rowheader">
@@ -406,7 +408,9 @@ export const PlayerTable = ({
                           </div>
                         ))}
                       </div>
-                      {expanded && <RowDetail row={r} />}
+                      <Accordion open={expanded}>
+                        <RowDetail row={r} />
+                      </Accordion>
                     </div>
                   );
                 })}

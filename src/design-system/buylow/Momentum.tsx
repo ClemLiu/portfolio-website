@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Accordion } from "./Accordion";
 import { Icon, type IconName } from "./icons";
 
 // The hot / cold indicator beside each player, and the legend that explains it.
@@ -74,13 +75,13 @@ export const MomentumLegend = () => {
   return (
     <section className="bl-legend" aria-label="Momentum legend">
       <button type="button" className="bl-legend-bar" aria-expanded={open} onClick={toggle}>
-        <Icon name={open ? "chevron-down" : "chevron-right"} />
+        <Icon name="chevron-right" />
         <span className="bl-legend-name">Momentum</span>
         <span className="bl-legend-hint">
           {open ? "How strong each buy or sell case is: FP/GP vs expected and vs 3Y" : "What the icons mean"}
         </span>
       </button>
-      {open && (
+      <Accordion open={open}>
         <div className="bl-legend-groups">
           {LEGEND.map((group) => (
             <div key={group.title}>
@@ -99,7 +100,7 @@ export const MomentumLegend = () => {
             </div>
           ))}
         </div>
-      )}
+      </Accordion>
     </section>
   );
 };

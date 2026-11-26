@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Accordion } from "./Accordion";
 import { Icon } from "./icons";
 import { Segmented } from "./Segmented";
 import {
@@ -98,7 +99,11 @@ const Dropdown = ({
         <span>{label}</span>
         <Icon name="chevron-down" />
       </button>
-      {open && <div className="bl-menu">{children(close)}</div>}
+      <div className="bl-menu-pop">
+        <Accordion open={open}>
+          <div className="bl-menu">{children(close)}</div>
+        </Accordion>
+      </div>
     </div>
   );
 };
