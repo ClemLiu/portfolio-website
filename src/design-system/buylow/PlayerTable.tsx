@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from "react";
-import { createPortal } from "react-dom";
 import { Icon } from "./icons";
 import { MomentumIcon } from "./Momentum";
+import { Tooltip, type Tip } from "./Tooltip";
 import { ROW_HEIGHT, type Column, type Density, type Row, type Sort, type SortKey } from "./model";
 
 // The table grid: a header row that sticks to the top of the page, a horizontally scrolling body with the
@@ -67,8 +67,6 @@ const cell = (column: Column, r: Row, role: RoleThresholds): ReactNode => {
 
 const cellStyle = (c: Column): CSSProperties => (c.id === "cautions" ? { flex: `1 0 ${c.width}px` } : { width: c.width });
 const cellClass = (c: Column) => (c.id === "cautions" ? "bl-cell" : "bl-cell bl-cell--number");
-
-type Tip = { title: string; text: string; x: number; y: number };
 
 const HeaderCell = ({
   label,
@@ -435,14 +433,7 @@ export const PlayerTable = ({
 
       {footer}
 
-      {tip &&
-        createPortal(
-          <div className="bl-tokens bl-tooltip" role="tooltip" style={{ left: Math.min(Math.max(tip.x, 132), window.innerWidth - 132), top: tip.y }}>
-            <strong>{tip.title}</strong>
-            <span>{tip.text}</span>
-          </div>,
-          document.body,
-        )}
+      <Tooltip tip={tip} />
     </div>
   );
 };

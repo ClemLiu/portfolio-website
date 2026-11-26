@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./icons";
+import { Segmented } from "./Segmented";
 import {
   COLUMNS,
   DEFAULT_COLUMNS,
@@ -183,13 +184,12 @@ const ColumnsSection = ({
       )}
       <div className="bl-panel-divider" />
       <h2 className="bl-panel-title">Table Density</h2>
-      <div className="bl-segmented" role="group" aria-label="Row density">
-        {DENSITIES.map((d) => (
-          <button key={d} type="button" aria-pressed={density === d} onClick={() => onChange({ density: d })}>
-            {d === "default" ? "Default" : d === "compact" ? "Compact" : "Roomy"}
-          </button>
-        ))}
-      </div>
+      <Segmented
+        label="Row density"
+        options={DENSITIES.map((d) => ({ value: d, label: d === "default" ? "Default" : d === "compact" ? "Compact" : "Roomy" }))}
+        value={density}
+        onChange={(d) => onChange({ density: d })}
+      />
     </>
   );
 };
@@ -221,30 +221,25 @@ const TimeRange = ({
   return (
     <div className="bl-field">
       <span className="bl-field-label">Time range</span>
-      <div className="bl-segmented" role="group" aria-label="Time range">
-        {[null, ...RANGES].map((days) => {
+      <Segmented
+        label="Time range"
+        options={[null, ...RANGES].map((days) => {
           const range = ranges?.find((r) => r.days === days);
           const missing = days !== null && ranges !== undefined && !range;
-          return (
-            <button
-              key={days ?? "season"}
-              type="button"
-              aria-pressed={value === days}
-              disabled={missing}
-              title={
-                missing
-                  ? "Not enough games played yet"
-                  : days === null
-                    ? "The whole season"
-                    : range && `The last ${days} days: players with ${range.minGp} or more games in them`
-              }
-              onClick={() => onChange(days)}
-            >
-              {days === null ? "Season" : `${days}D`}
-            </button>
-          );
+          return {
+            value: days,
+            label: days === null ? "Season" : `${days}D`,
+            disabled: missing,
+            title: missing
+              ? "Not enough games played yet"
+              : days === null
+                ? "The whole season"
+                : range && `The last ${days} days: players with ${range.minGp} or more games in them`,
+          };
         })}
-      </div>
+        value={value}
+        onChange={onChange}
+      />
       {caption && <span className="bl-caption">{caption}</span>}
     </div>
   );

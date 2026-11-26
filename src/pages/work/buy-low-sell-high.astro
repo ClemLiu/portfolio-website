@@ -36,8 +36,9 @@ Bookmark the page or save the URL to keep your FP settings and filters. You can 
 		/>
 	</Fragment>
 	<div class="blur-fade-in pb-24">
-		<!-- overflow-clip rounds the corners without becoming a scroll container, so the table header can stick -->
-		<div class="soft-image-shadow overflow-clip rounded-xl border border-ink-300/20 bg-[#12100f] p-3 md:p-6">
+		<!-- overflow-clip rounds the corners without becoming a scroll container, so the table header can stick.
+		     On phones the box runs edge to edge (-mx-10 cancels the layout's side padding) to give the table room. -->
+		<div class="soft-image-shadow -mx-10 overflow-clip border-y border-ink-300/20 bg-[#12100f] py-3 md:mx-0 md:rounded-xl md:border-x md:p-6">
 			<header class="bl-tokens bl-intro">
 				<h1>Hot &amp; Cold !</h1>
 				<p>{intro}</p>
@@ -49,7 +50,7 @@ Bookmark the page or save the URL to keep your FP settings and filters. You can 
 				</p>
 			</header>
 			<BuyLowTool client:only="react">
-				<div slot="fallback" class="bl-tokens min-h-[520px]">Loading players…</div>
+				<div slot="fallback" class="bl-tokens min-h-[520px] px-4 md:px-0">Loading players…</div>
 			</BuyLowTool>
 		</div>
 	</div>

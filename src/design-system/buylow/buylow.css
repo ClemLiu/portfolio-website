@@ -74,10 +74,10 @@
   flex-direction: column;
   gap: 16px;
 }
+/* the space between the side panel and the table belongs to the panel's drawer, so it closes with it */
 .bl-content {
   display: flex;
   align-items: stretch;
-  gap: 16px;
 }
 
 /* ---------- toolbar ---------- */
@@ -235,7 +235,12 @@
 .bl-search input::placeholder {
   color: var(--muted);
 }
+/* Motion is the "Tabs sliding" recipe from transitions.dev (https://transitions.dev/detail.html?t=tabs-sliding):
+   one highlight sits behind the choices and slides to the picked one */
 .bl-segmented {
+  --bl-tabs-time: 250ms;
+  --bl-tabs-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
   display: flex;
   gap: 4px;
   height: 36px;
@@ -243,19 +248,35 @@
   border: 1px solid var(--border);
 }
 .bl-segmented button {
+  position: relative;
+  z-index: 1;
   flex: 1;
   min-width: 0;
   border: 1px solid transparent;
   color: var(--text-2);
   font: 500 13px/16px "Golos Text", sans-serif;
+  transition: color var(--bl-tabs-time) var(--bl-tabs-ease);
 }
+.bl-segmented button:not(:disabled):hover,
 .bl-segmented button[aria-pressed="true"] {
-  background: var(--raised);
-  border-color: var(--border);
   color: var(--text);
 }
 .bl-segmented button:disabled {
   color: var(--disabled);
+}
+/* Segmented.tsx sets its width and position */
+.bl-segmented-pill {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 0;
+  width: 0;
+  border: 1px solid var(--border);
+  background: var(--raised);
+  pointer-events: none;
+  transition:
+    transform var(--bl-tabs-time) var(--bl-tabs-ease),
+    width var(--bl-tabs-time) var(--bl-tabs-ease);
 }
 .bl-chips {
   display: flex;
@@ -957,31 +978,68 @@
     left: 100%;
   }
 }
+/* Column header tooltips. Motion is the "Tooltip open/close" recipe from transitions.dev: one bubble that
+   appears after a short pause, leaves at once, and travels between neighbouring headers. The colours and the
+   place under the header are the design's. Tooltip.tsx sets its position and size. */
 .bl-tooltip {
+  --bl-tt-move: 160ms cubic-bezier(0.22, 1, 0.36, 1);
   position: fixed;
   z-index: 50;
+  top: 0;
+  left: 0;
+  color: var(--canvas);
+  font-size: 13px;
+  line-height: 16px;
+  opacity: 0;
+  scale: 0.98;
+  transform-origin: 50% 0;
+  pointer-events: none;
+  /* leaving: no delay */
+  transition:
+    opacity 50ms ease-out,
+    scale 50ms ease-out,
+    translate var(--bl-tt-move);
+}
+/* only appearing waits */
+.bl-tooltip[data-show="true"] {
+  opacity: 1;
+  scale: 1;
+  transition:
+    opacity 150ms ease-out 80ms,
+    scale 150ms ease-out 80ms,
+    translate var(--bl-tt-move);
+}
+.bl-tooltip-box {
+  overflow: hidden;
+  background: var(--inverse);
+  transition:
+    width var(--bl-tt-move),
+    height var(--bl-tt-move);
+}
+/* keeps its own width, so the words don't re-wrap while the box changes size */
+.bl-tooltip-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
   width: max-content;
   max-width: 248px;
-  margin-top: 8px;
   padding: 8px;
-  background: var(--inverse);
-  color: var(--canvas);
-  font-size: 13px;
-  line-height: 16px;
-  transform: translateX(-50%);
-  pointer-events: none;
 }
 .bl-tooltip::before {
   content: "";
   position: absolute;
   bottom: 100%;
-  left: calc(50% - 6px);
+  left: calc(var(--bl-tt-arrow, 50%) - 6px);
   border: 6px solid transparent;
   border-top: 0;
   border-bottom: 8px solid var(--inverse);
+  transition: left var(--bl-tt-move);
+}
+/* a hidden bubble jumps to its next trigger */
+.bl-tooltip.bl-tooltip--snap,
+.bl-tooltip--snap::before,
+.bl-tooltip--snap .bl-tooltip-box {
+  transition: none;
 }
 .bl-toast {
   position: fixed;
@@ -1002,6 +1060,137 @@
   transform: translateX(-50%);
 }
 
+/* ---------- side panel drawer ---------- */
+/* Opens towards the right and closes towards the left, easing into place. A closing panel stays solid at first
+   and fades out as it finishes. The @starting-style blocks are where an opening panel starts from. */
+.bl-drawer {
+  --bl-drawer-time: 320ms;
+  --bl-drawer-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: clip;
+}
+.bl-drawer-body {
+  display: flex;
+  flex-direction: column;
+}
+/* Switching from one panel to the other: the "Page side-by-side" recipe from transitions.dev
+   (https://transitions.dev/detail.html?t=page-side-by-side), with its timing, distance, blur and easing.
+   FP Settings is page 1 (it leaves to the left) and Filters is page 2 (it leaves to the right). */
+.bl-pages {
+  --bl-page-time: 250ms;
+  --bl-page-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  /* held still behind both pages, so only their contents move */
+  background: var(--subtle);
+}
+.bl-page {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  filter: blur(3px);
+  pointer-events: none;
+  transition:
+    opacity var(--bl-page-time) var(--bl-page-ease),
+    transform var(--bl-page-time) var(--bl-page-ease),
+    filter var(--bl-page-time) var(--bl-page-ease);
+}
+.bl-page[data-page-id="1"] {
+  transform: translateX(-8px);
+}
+.bl-page[data-page-id="2"] {
+  transform: translateX(8px);
+}
+/* the current page; only this one gives the drawer its height */
+.bl-pages[data-page="1"] > .bl-page[data-page-id="1"],
+.bl-pages[data-page="2"] > .bl-page[data-page-id="2"] {
+  position: relative;
+  flex: 1 0 auto;
+  opacity: 1;
+  filter: none;
+  pointer-events: auto;
+  transform: none;
+}
+.bl-page > .bl-panel {
+  flex: 1 0 auto;
+  background: transparent;
+}
+
+/* beside the table: the width opens and closes, and the panel rides its moving edge at full size */
+@media (min-width: 900px) {
+  .bl-drawer {
+    display: flex;
+    flex: none;
+    justify-content: flex-end;
+    width: 272px;
+    transition: width var(--bl-drawer-time) var(--bl-drawer-ease);
+  }
+  .bl-drawer[data-open="false"] {
+    width: 0;
+  }
+  .bl-drawer-body {
+    flex: none;
+    width: 256px;
+    margin-right: 16px;
+    transition: opacity 220ms ease-out;
+  }
+  .bl-drawer[data-open="false"] .bl-drawer-body {
+    opacity: 0;
+    transition: opacity 180ms ease-in 140ms;
+  }
+  @starting-style {
+    .bl-drawer--moves {
+      width: 0;
+    }
+    .bl-drawer--moves .bl-drawer-body {
+      opacity: 0;
+    }
+  }
+}
+
+/* stacked above the table: the height opens and closes while the panel slides in from the left and back out */
+@media (max-width: 899.98px) {
+  .bl-drawer {
+    display: grid;
+    grid-template-rows: 1fr;
+    margin-bottom: 16px;
+    transition:
+      grid-template-rows var(--bl-drawer-time) var(--bl-drawer-ease),
+      margin-bottom var(--bl-drawer-time) var(--bl-drawer-ease);
+  }
+  .bl-drawer[data-open="false"] {
+    grid-template-rows: 0fr;
+    margin-bottom: 0;
+  }
+  .bl-drawer-body {
+    min-height: 0;
+    overflow: clip;
+    transition:
+      opacity 220ms ease-out,
+      transform var(--bl-drawer-time) var(--bl-drawer-ease);
+  }
+  .bl-drawer[data-open="false"] .bl-drawer-body {
+    opacity: 0;
+    transform: translateX(-100%);
+    transition:
+      opacity 180ms ease-in 140ms,
+      transform var(--bl-drawer-time) var(--bl-drawer-ease);
+  }
+  @starting-style {
+    .bl-drawer--moves {
+      grid-template-rows: 0fr;
+      margin-bottom: 0;
+    }
+    .bl-drawer--moves .bl-drawer-body {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+  }
+}
+
 /* ---------- narrow screens ---------- */
 @media (max-width: 899.98px) {
   .bl-content {
@@ -1017,6 +1206,15 @@
   }
 }
 
+/* phones: the box has no side padding (see the page), so the table, legend and panels reach the screen edges;
+   text and buttons keep a margin that lines up with the table cells */
+@media (max-width: 767.98px) {
+  .bl-intro,
+  .bl-toolbar {
+    padding-inline: 16px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bl-skeleton,
   .bl-progress::after {
@@ -1025,7 +1223,17 @@
   .bl-progress::after {
     width: 100%;
   }
-  .bl-rows {
+  .bl-rows,
+  .bl-drawer,
+  .bl-drawer-body,
+  .bl-drawer[data-open="false"] .bl-drawer-body,
+  .bl-page,
+  .bl-segmented button,
+  .bl-segmented-pill,
+  .bl-tooltip,
+  .bl-tooltip[data-show="true"],
+  .bl-tooltip::before,
+  .bl-tooltip-box {
     transition: none;
   }
 }

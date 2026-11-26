@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Icon, type IconName } from "./icons";
 import { MomentumLegend } from "./Momentum";
+import { PanelDrawer } from "./PanelDrawer";
 import { FiltersPanel, PerPageSelect, ScoringPanel } from "./Panels";
 import { PlayerTable } from "./PlayerTable";
 import { COLUMNS, NO_FILTERS, filterRows, fromQuery, sortRows, toQuery, toRows, type Filters, type Settings, type SortKey } from "./model";
@@ -14,7 +15,9 @@ import { rescore, type PlayersData } from "./rescore.js";
 const DATA_URL = "/data/players.json";
 const PER_PAGE = [25, 50, 100];
 
-type PanelId = "scoring" | "filters";
+/** the side panels, in the order of their buttons */
+const PANELS = ["scoring", "filters"] as const;
+type PanelId = (typeof PANELS)[number];
 
 const offers = (data: PlayersData, days: number) => !!data.ranges?.some((r) => r.days === days);
 
@@ -185,18 +188,23 @@ export const BuyLowTool = () => {
       </div>
 
       <div className="bl-content">
-        {panel === "filters" && (
-          <FiltersPanel
-            filters={filters}
-            teams={teams}
-            ranges={data ? (data.ranges ?? []) : undefined}
-            through={data?.gamesThrough}
-            columns={columns}
-            density={density}
-            onChange={update}
-          />
-        )}
-        {panel === "scoring" && <ScoringPanel weights={weights} onChange={(w) => update({ weights: w })} />}
+        <PanelDrawer open={panel} pages={PANELS}>
+          {(id) =>
+            id === "filters" ? (
+              <FiltersPanel
+                filters={filters}
+                teams={teams}
+                ranges={data ? (data.ranges ?? []) : undefined}
+                through={data?.gamesThrough}
+                columns={columns}
+                density={density}
+                onChange={update}
+              />
+            ) : (
+              <ScoringPanel weights={weights} onChange={(w) => update({ weights: w })} />
+            )
+          }
+        </PanelDrawer>
 
         <PlayerTable
           rows={visible}
