@@ -7,11 +7,11 @@ name: Sync Hot & Cold data
 
 on:
   schedule:
-    # UTC, like the data repo's job (18:08, backup 18:39), so the two stay in step when the clocks change.
-    # 18:23 picks up an on-time update; 19:45 allows an hour for late starts and the backup run.
-    # (1:23 and 2:45 pm Montréal time in winter, an hour later in summer.)
-    - cron: "23 18 * * *"
-    - cron: "45 19 * * *"
+    # UTC, like the data repo's job (21:11, backup 21:52), so the two stay in step when the clocks change.
+    # 21:26 picks up an on-time update; 23:07 allows over an hour for late starts and the backup run.
+    # (4:26 and 6:07 pm Montréal time in winter, an hour later in summer.)
+    - cron: "26 21 * * *"
+    - cron: "7 23 * * *"
   workflow_dispatch:
 
 permissions:
