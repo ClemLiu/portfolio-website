@@ -1,0 +1,66 @@
+# Copies the Hot & Cold data from the private data repo into this site once a day. A commit here makes Vercel
+# redeploy, so the live page picks up the new numbers. Nothing is committed when nothing changed.
+#
+# Needs a repository secret named HOCKEY_DATA_TOKEN: a fine-grained GitHub token with read-only "Contents"
+# access to the data repo only. Run it by hand from the Actions tab ("Run workflow").
+name: Sync Hot & Cold data
+
+on:
+  schedule:
+    # UTC. The data repo updates at 10:00; the second run catches days when that one finishes late.
+    - cron: "0 11 * * *"
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-buylow-data
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+
+      - name: Fetch the two data files
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/Hockey-BuyLowSellHigh
+          token: ${{ secrets.HOCKEY_DATA_TOKEN }}
+          path: data-repo
+          persist-credentials: false
+          # only these two: nothing else from the private repo is downloaded
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /public/players.json
+            /web/rescore.js
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Copy them into the site
+        run: sh scripts/sync-buylow.sh "$GITHUB_WORKSPACE/data-repo"
+
+      - name: Check the new data works
+        run: node scripts/check-buylow.mjs
+
+      - name: Commit if anything changed
+        env:
+          OWNER: ${{ github.repository_owner }}
+          OWNER_ID: ${{ github.repository_owner_id }}
+        run: |
+          FILES="public/data/players.json src/design-system/buylow/rescore.js"
+          if git diff --quiet -- $FILES; then
+            echo "No change today."
+            exit 0
+          fi
+          # committed as the repository owner (private noreply address), so Vercel deploys it
+          git config user.name "$OWNER"
+          git config user.email "$OWNER_ID+$OWNER@users.noreply.github.com"
+          git add $FILES
+          git commit -m "Update Hot & Cold data"
+          git push
