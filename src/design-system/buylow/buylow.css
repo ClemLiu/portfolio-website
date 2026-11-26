@@ -976,11 +976,18 @@
   font-size: 13px;
   line-height: 16px;
 }
+/* what decides the levels, shown with the icons; it lines up under "Momentum" */
+.bl-legend-note {
+  padding: 2px 16px 0 40px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 16px;
+}
 .bl-legend-groups {
   display: flex;
   flex-wrap: wrap;
   gap: 16px 32px;
-  padding: 2px 16px 10px 40px;
+  padding: 12px 16px 10px 40px;
 }
 .bl-legend-title {
   margin-bottom: 8px;

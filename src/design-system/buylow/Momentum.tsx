@@ -77,11 +77,10 @@ export const MomentumLegend = () => {
       <button type="button" className="bl-legend-bar" aria-expanded={open} onClick={toggle}>
         <Icon name="chevron-right" />
         <span className="bl-legend-name">Momentum</span>
-        <span className="bl-legend-hint">
-          {open ? "How strong each buy or sell case is: FP/GP vs expected and vs 3Y" : "What the icons mean"}
-        </span>
+        <span className="bl-legend-hint">Legend for Momentum Icon</span>
       </button>
       <Accordion open={open}>
+        <p className="bl-legend-note">Determined by FP/GP vs Expected and vs 3Y avg</p>
         <div className="bl-legend-groups">
           {LEGEND.map((group) => (
             <div key={group.title}>
