@@ -17,8 +17,9 @@
  *
  * rows = every listed player (buys and sells), sorted from strongest buy to strongest sell.
  * Third argument options:
- *   { games: 10 }  Last 10 games instead of the season (any value in data.windows: 5, 10, 15, 20).
- *                  Same model on each player's own last N games; players with fewer games are left out.
+ *   { days: 14 }   the last 14 days instead of the season (any `days` in data.ranges: 14, 30).
+ *                  Same model on each player's games in that range; players with fewer than the
+ *                  range's minGp games in it are left out.
  *   { all: true }  also return every skater with their computed values.
  */
 
@@ -159,14 +160,15 @@ function highlights(p, v, w, side, cautionList) {
  * Score every skater under `weights` and build the combined buy/sell list.
  * @returns {{ weights, cutoffs, rows, players? }}
  */
-export function rescore(data, weights = data.defaultScoring.weights, { all = false, games = null } = {}) {
+export function rescore(data, weights = data.defaultScoring.weights, { all = false, days = null } = {}) {
   const w = normaliseWeights(weights);
   let model = data.model;
   let players = data.players;
-  if (games) {                                     // Last N games: each player's own last N, same model
-    if (!(data.windows || []).includes(games)) throw new Error(`No Last ${games} window in this data (has: ${data.windows})`);
-    players = players.filter((p) => p.windows?.[games]).map((p) => ({ ...p, ...p.windows[games] }));
-    model = { ...model, minGp: games };
+  if (days) {                                      // date range: the last `days` days, same model
+    const range = (data.ranges || []).find((r) => r.days === days);
+    if (!range) throw new Error(`No ${days}-day range in this data (has: ${(data.ranges || []).map((r) => r.days)})`);
+    players = players.filter((p) => p.ranges?.[days]).map((p) => ({ ...p, ...p.ranges[days] }));
+    model = { ...model, minGp: range.minGp };
   }
   const scored = players.map((p) => score(p, w, model));
   const cut = cutoffsFor(players, scored, model);

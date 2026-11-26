@@ -45,6 +45,9 @@ export type Skater = {
   gxgTrend: string;
 };
 
+/** `start` and `end` are dates, YYYYMMDD; players need `minGp` games in the range to be listed */
+export type DateRange = { days: number; minGp: number; start: string; end: string };
+
 export type PlayersData = {
   generatedAt: string;
   season: number;
@@ -52,8 +55,8 @@ export type PlayersData = {
   sources: { name: string; url: string; used: string }[];
   defaultScoring: { name: string; weights: Weights };
   model: { role: { toi: number; ppToi: number } };
-  /** the Last N games windows the data offers; early in a season some are missing */
-  windows?: number[];
+  /** the date ranges the data offers (last N days); early in a season some are missing */
+  ranges?: DateRange[];
   /** date of the latest game, YYYYMMDD */
   gamesThrough?: string;
   players: Skater[];
@@ -62,8 +65,8 @@ export type PlayersData = {
 export function rescore(
   data: PlayersData,
   weights?: Partial<Weights>,
-  /** games: score each player's own last N games (one of data.windows) instead of the season */
-  options?: { all?: boolean; games?: number | null },
+  /** days: score the games in the last N days (one of data.ranges) instead of the season */
+  options?: { all?: boolean; days?: number | null },
 ): { weights: Weights; rows: ListedRow[]; players?: Skater[] };
 
 export const YAHOO_DEFAULT: Readonly<Weights>;

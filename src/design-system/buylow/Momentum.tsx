@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Icon, type IconName } from "./icons";
 
 // The hot / cold indicator beside each player, and the legend that explains it.
@@ -27,43 +28,78 @@ export const MomentumIcon = ({ momentum, label }: { momentum: string; label?: st
   );
 };
 
-// In plain words, the model's Momentum rules (see "Cautions and Momentum" in the data repo's README).
+// What each level means, as worded in the design.
 const LEGEND = [
   {
-    title: "Cold: buy low",
+    title: "Buy low",
     levels: [
-      { momentum: "Cold", text: "Scoring less than his play and history suggest he should. Could be a good time to get him." },
-      { momentum: "Very cold", text: "A much bigger gap, with no cautions. The clearest buys." },
-      { momentum: "Frozen", text: "A much bigger gap, but with at least one caution: part of the slump may be real." },
+      { momentum: "Frozen", text: "Well below, with a caution" },
+      { momentum: "Very cold", text: "Well below expected" },
+      { momentum: "Cold", text: "Below expected" },
     ],
   },
   {
-    title: "Hot: sell high",
+    title: "Sell high",
     levels: [
-      { momentum: "Hot", text: "Scoring more than his play and history suggest he should. Could be a good time to trade him." },
-      { momentum: "Very hot", text: "A much bigger gap, with no cautions. The clearest sells." },
-      { momentum: "On fire", text: "A much bigger gap, but with at least one caution: part of the hot streak may be real." },
+      { momentum: "Hot", text: "Above expected" },
+      { momentum: "Very hot", text: "Well above expected" },
+      { momentum: "On fire", text: "Well above, with a caution" },
     ],
   },
 ];
 
-export const MomentumLegend = () => (
-  <section className="bl-legend" aria-label="Hot and cold legend">
-    {LEGEND.map((group) => (
-      <div key={group.title}>
-        <h2 className="bl-legend-title">{group.title}</h2>
-        <dl className="bl-legend-items">
-          {group.levels.map(({ momentum, text }) => (
-            <div className="bl-legend-item" key={momentum}>
-              <MomentumIcon momentum={momentum} />
-              <div>
-                <dt>{momentum}</dt>
-                <dd>{text}</dd>
-              </div>
+/** whether this visitor last left the legend open; deliberately not part of the page URL */
+const LEGEND_KEY = "buylow-legend-open";
+
+// storage can be unavailable (private windows, blocked site data); the legend then just starts closed
+const wasOpen = () => {
+  try {
+    return window.localStorage.getItem(LEGEND_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+
+/** a bar that opens to show the six levels */
+export const MomentumLegend = () => {
+  const [open, setOpen] = useState(wasOpen);
+  const toggle = () => {
+    setOpen(!open);
+    try {
+      window.localStorage.setItem(LEGEND_KEY, open ? "0" : "1");
+    } catch {
+      // not remembered, which is fine
+    }
+  };
+  return (
+    <section className="bl-legend" aria-label="Momentum legend">
+      <button type="button" className="bl-legend-bar" aria-expanded={open} onClick={toggle}>
+        <Icon name={open ? "chevron-down" : "chevron-right"} />
+        <span className="bl-legend-name">Momentum</span>
+        <span className="bl-legend-hint">
+          {open ? "How strong each buy or sell case is: FP/GP vs expected and vs 3Y" : "What the icons mean"}
+        </span>
+      </button>
+      {open && (
+        <div className="bl-legend-groups">
+          {LEGEND.map((group) => (
+            <div key={group.title}>
+              <h2 className="bl-legend-title">{group.title}</h2>
+              <dl className="bl-legend-items">
+                {group.levels.map(({ momentum, text }) => (
+                  <div className="bl-legend-item" key={momentum}>
+                    <MomentumIcon momentum={momentum} />
+                    <div>
+                      <dt>{momentum}</dt>
+                      <dd>{text}</dd>
+                    </div>
+                  </div>
+                ))}
+              </dl>
             </div>
           ))}
-        </dl>
-      </div>
-    ))}
-  </section>
-);
+        </div>
+      )}
+    </section>
+  );
+};

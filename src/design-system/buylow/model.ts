@@ -9,8 +9,8 @@ export const POSITIONS = ["F", "C", "L", "R", "D"] as const;
 /** F is a shortcut for the three forward positions; it's never stored in the filters itself */
 export const FORWARDS = ["C", "L", "R"];
 export const MOMENTUM = ["Frozen", "Very cold", "Cold", "Hot", "Very hot", "On fire"];
-/** the Last N games choices, besides "All" */
-export const GAMES = [5, 10, 15, 20];
+/** the Time range choices in days, besides the whole season */
+export const RANGES = [14, 30];
 export const DENSITIES = ["compact", "default", "comfortable"] as const;
 export type Density = (typeof DENSITIES)[number];
 export const ROW_HEIGHT: Record<Density, number> = { compact: 32, default: 40, comfortable: 48 };
@@ -51,7 +51,7 @@ const ALL_COLUMNS: Column[] = [
     width: 144,
     standard: true,
     sort: (r) => r.fpVs3y,
-    tooltip: "FP/GP in the selected games minus his FP/GP over the last 3 seasons, with your scoring.",
+    tooltip: "FP/GP in the selected time range minus his FP/GP over the last 3 seasons, with your scoring.",
   },
   {
     id: "toi",
@@ -69,7 +69,7 @@ const ALL_COLUMNS: Column[] = [
     sort: (r) => r.ppToiVs3y,
     tooltip: "Change in power-play minutes per game compared with his 3-year average.",
   },
-  { id: "expGA", label: "Exp G / Exp A", width: 152, standard: false, sort: (r) => r.expG, tooltip: "Expected goals and expected assists in the selected games. Sorts by expected goals." },
+  { id: "expGA", label: "Exp G / Exp A", width: 152, standard: false, sort: (r) => r.expG, tooltip: "Expected goals and expected assists in the selected time range. Sorts by expected goals." },
   { id: "sog60", label: "SOG/60", width: 112, standard: false, sort: (r) => r.sog60, tooltip: "Shots on goal per 60 minutes." },
   { id: "gxg", label: "G/xG trend", width: 200, standard: false, tooltip: "Goals compared with expected goals in each of the last 3 seasons, oldest first." },
   { id: "cautions", label: "Cautions", width: 328, standard: true },
@@ -85,8 +85,8 @@ export type Sort = { key: SortKey; dir: "asc" | "desc" };
 
 /** an empty list means no filter, which shows as every chip selected */
 export type Filters = {
-  /** null is the whole season; otherwise each player's own last N games (re-scored, not just filtered) */
-  games: number | null;
+  /** Time range: null is the whole season; otherwise the last N days (re-scored, not just filtered) */
+  days: number | null;
   q: string;
   pos: string[];
   teams: string[];
@@ -101,7 +101,7 @@ export type Settings = {
   density: Density;
 };
 
-export const NO_FILTERS: Filters = { games: null, q: "", pos: [], teams: [], momentum: [] };
+export const NO_FILTERS: Filters = { days: null, q: "", pos: [], teams: [], momentum: [] };
 /** strongest buys first */
 export const DEFAULT_SORT: Sort = { key: "vsExp", dir: "asc" };
 
@@ -154,8 +154,8 @@ export const toggleMomentum = (momentum: string[], level: string): string[] => {
 export const toQuery = (s: Settings): string => {
   const p = new URLSearchParams();
   for (const { key } of STATS) if (s.weights[key] !== YAHOO_DEFAULT[key]) p.set(key, String(s.weights[key]));
-  const { games, q, pos, teams, momentum } = s.filters;
-  if (games) p.set("games", String(games));
+  const { days, q, pos, teams, momentum } = s.filters;
+  if (days) p.set("days", String(days));
   if (q) p.set("q", q);
   if (pos.length) p.set("pos", pos.join(","));
   if (teams.length) p.set("team", teams.join(","));
@@ -182,13 +182,13 @@ export const fromQuery = (search: string): Settings => {
   }
   const sortKey = p.get("sort");
   const sortable = sortKey === "name" || COLUMNS.some((c) => c.id === sortKey && c.sort);
-  const games = Number(p.get("games"));
+  const days = Number(p.get("days"));
   const cols = p.get("cols");
   const density = p.get("density") as Density;
   return {
     weights,
     filters: {
-      games: GAMES.includes(games) ? games : null,
+      days: RANGES.includes(days) ? days : null,
       q: p.get("q") ?? "",
       pos: positions(list(p.get("pos"))),
       teams: list(p.get("team")).filter((x) => /^[A-Z]{3}$/.test(x)),

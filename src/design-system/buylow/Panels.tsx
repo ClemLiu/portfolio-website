@@ -4,10 +4,10 @@ import {
   COLUMNS,
   DEFAULT_COLUMNS,
   DENSITIES,
-  GAMES,
   MOMENTUM,
   NO_FILTERS,
   POSITIONS,
+  RANGES,
   STATS,
   positionSelected,
   toggleMomentum,
@@ -16,7 +16,7 @@ import {
   type Density,
   type Filters,
 } from "./model";
-import { YAHOO_DEFAULT, type StatKey, type Weights } from "./rescore.js";
+import { YAHOO_DEFAULT, type DateRange, type StatKey, type Weights } from "./rescore.js";
 
 // The two side panels from the design: Filters (with the column picker at the bottom) and FP Settings.
 
@@ -194,18 +194,75 @@ const ColumnsSection = ({
   );
 };
 
+/** a data date (YYYYMMDD) as "Nov 24"; formatted in UTC so the day can't shift */
+const shortDate = (date: string) =>
+  new Date(`${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}T00:00:00Z`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+
+// Season, or the last N days, with the dates the stats cover underneath.
+const TimeRange = ({
+  value,
+  ranges,
+  through,
+  onChange,
+}: {
+  value: number | null;
+  /** the ranges the data offers; undefined while it's still loading */
+  ranges?: DateRange[];
+  /** date of the latest game, YYYYMMDD */
+  through?: string;
+  onChange: (days: number | null) => void;
+}) => {
+  const selected = ranges?.find((r) => r.days === value);
+  const caption = selected ? `${shortDate(selected.start)} – ${shortDate(selected.end)}` : value === null && through ? `Through ${shortDate(through)}` : "";
+  return (
+    <div className="bl-field">
+      <span className="bl-field-label">Time range</span>
+      <div className="bl-segmented" role="group" aria-label="Time range">
+        {[null, ...RANGES].map((days) => {
+          const range = ranges?.find((r) => r.days === days);
+          const missing = days !== null && ranges !== undefined && !range;
+          return (
+            <button
+              key={days ?? "season"}
+              type="button"
+              aria-pressed={value === days}
+              disabled={missing}
+              title={
+                missing
+                  ? "Not enough games played yet"
+                  : days === null
+                    ? "The whole season"
+                    : range && `The last ${days} days: players with ${range.minGp} or more games in them`
+              }
+              onClick={() => onChange(days)}
+            >
+              {days === null ? "Season" : `${days}D`}
+            </button>
+          );
+        })}
+      </div>
+      {caption && <span className="bl-caption">{caption}</span>}
+    </div>
+  );
+};
+
 export const FiltersPanel = ({
   filters,
   teams,
-  windows,
+  ranges,
+  through,
   columns,
   density,
   onChange,
 }: {
   filters: Filters;
   teams: string[];
-  /** the games windows the data offers; undefined while it's still loading */
-  windows?: number[];
+  ranges?: DateRange[];
+  through?: string;
   columns: ColumnId[];
   density: Density;
   onChange: (next: { filters?: Filters; columns?: ColumnId[]; density?: Density }) => void;
@@ -225,26 +282,7 @@ export const FiltersPanel = ({
         />
       </label>
 
-      <div className="bl-field">
-        <span className="bl-field-label">Games</span>
-        <div className="bl-segmented" role="group" aria-label="Games">
-          {[null, ...GAMES].map((n) => {
-            const missing = n !== null && windows !== undefined && !windows.includes(n);
-            return (
-              <button
-                key={n ?? "all"}
-                type="button"
-                aria-pressed={filters.games === n}
-                disabled={missing}
-                title={missing ? "Not enough games played yet" : n === null ? "The whole season" : `Each player's last ${n} games`}
-                onClick={() => setFilters({ games: n })}
-              >
-                {n === null ? "All" : `L${n}`}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <TimeRange value={filters.days} ranges={ranges} through={through} onChange={(days) => setFilters({ days })} />
 
       <div className="bl-field">
         <span className="bl-field-label">Position</span>

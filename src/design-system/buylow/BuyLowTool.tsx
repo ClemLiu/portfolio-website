@@ -16,6 +16,8 @@ const PER_PAGE = [25, 50, 100];
 
 type PanelId = "scoring" | "filters";
 
+const offers = (data: PlayersData, days: number) => !!data.ranges?.some((r) => r.days === days);
+
 // first page, the pages around the current one, last page: 1 … 4 5 6 … 12
 const pageList = (current: number, total: number): (number | "…")[] => {
   const start = Math.min(Math.max(current - 1, 1), Math.max(total - 2, 1));
@@ -44,9 +46,9 @@ export const BuyLowTool = () => {
       })
       .then((next: PlayersData) => {
         setData(next);
-        // a link can ask for a games window the data doesn't offer yet (early season): show the season instead
+        // a link can ask for a time range the data doesn't offer yet (early season): show the season instead
         setSettings((s) =>
-          s.filters.games && !next.windows?.includes(s.filters.games) ? { ...s, filters: { ...s.filters, games: null } } : s,
+          s.filters.days && !offers(next, s.filters.days) ? { ...s, filters: { ...s.filters, days: null } } : s,
         );
       })
       .catch(() => setFailed(true));
@@ -61,20 +63,20 @@ export const BuyLowTool = () => {
     window.history.replaceState(window.history.state, "", url);
   }, [query]);
 
-  // re-score shortly after the last change to FP Settings or Games, not on every keystroke
-  const { games } = filters;
-  const [scoredWith, setScoredWith] = useState({ weights, games });
+  // re-score shortly after the last change to FP Settings or Time range, not on every keystroke
+  const { days } = filters;
+  const [scoredWith, setScoredWith] = useState({ weights, days });
   useEffect(() => {
-    const timer = window.setTimeout(() => setScoredWith({ weights, games }), 250);
+    const timer = window.setTimeout(() => setScoredWith({ weights, days }), 250);
     return () => window.clearTimeout(timer);
-  }, [weights, games]);
-  const updating = data !== null && (scoredWith.weights !== weights || scoredWith.games !== games);
+  }, [weights, days]);
+  const updating = data !== null && (scoredWith.weights !== weights || scoredWith.days !== days);
 
   const rows = useMemo(() => {
     if (!data) return [];
-    // rescore.js throws on a window the data doesn't have
-    const offered = scoredWith.games && data.windows?.includes(scoredWith.games) ? scoredWith.games : null;
-    const result = rescore(data, scoredWith.weights, { all: true, games: offered });
+    // rescore.js throws on a range the data doesn't have
+    const offered = scoredWith.days && offers(data, scoredWith.days) ? scoredWith.days : null;
+    const result = rescore(data, scoredWith.weights, { all: true, days: offered });
     return toRows(result.rows, result.players!);
   }, [data, scoredWith]);
   const teams = useMemo(() => (data ? [...new Set(data.players.map((p) => p.team))].sort() : []), [data]);
@@ -110,7 +112,7 @@ export const BuyLowTool = () => {
   };
 
   const chips = [
-    filters.games !== null && { label: `Games: L${filters.games}`, clear: { games: null } },
+    filters.days !== null && { label: `Last ${filters.days} days`, clear: { days: null } },
     filters.q && { label: `Search: ${filters.q}`, clear: { q: "" } },
     filters.pos.length > 0 && { label: `Pos: ${filters.pos.join(", ")}`, clear: { pos: [] as string[] } },
     filters.teams.length > 0 && {
@@ -183,7 +185,17 @@ export const BuyLowTool = () => {
       </div>
 
       <div className="bl-content">
-        {panel === "filters" && <FiltersPanel filters={filters} teams={teams} windows={data ? (data.windows ?? []) : undefined} columns={columns} density={density} onChange={update} />}
+        {panel === "filters" && (
+          <FiltersPanel
+            filters={filters}
+            teams={teams}
+            ranges={data ? (data.ranges ?? []) : undefined}
+            through={data?.gamesThrough}
+            columns={columns}
+            density={density}
+            onChange={update}
+          />
+        )}
         {panel === "scoring" && <ScoringPanel weights={weights} onChange={(w) => update({ weights: w })} />}
 
         <PlayerTable
@@ -199,7 +211,7 @@ export const BuyLowTool = () => {
             <div className="bl-empty">
               <Icon name="search" size={20} />
               <strong>No players match these filters</strong>
-              <p>Try removing a filter or picking a different Games range.</p>
+              <p>Try removing a filter or picking a different time range.</p>
               <button type="button" className="bl-button bl-button--small" onClick={() => setFilters(NO_FILTERS)}>
                 Clear filters
               </button>
