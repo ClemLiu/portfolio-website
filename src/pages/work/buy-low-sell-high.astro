@@ -2,6 +2,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { Tag } from "../../design-system/components/Tag";
 import { BuyLowTool } from "../../design-system/buylow/BuyLowTool";
 import "../../design-system/buylow/buylow.css";
 
@@ -29,11 +30,11 @@ Bookmark the page or save the URL to keep your FP settings and filters. You can 
 
 const description = "A fantasy hockey tool for finding buy-low and sell-high players.";
 // What LinkedIn and other apps show when the page is shared. There's deliberately no og:url, so a shared link
-// keeps the settings in it. The image (1200 x 630, from the data repo's docs/images) is a fixed illustration;
-// give a new one a new file name, as apps cache it.
+// keeps the settings in it. The image (1200 x 630, the "Social preview" frame in the Figma file) is a fixed
+// illustration; give a new one a new file name, as apps cache it.
 const share = {
 	title: "Hot & Cold, find hidden value on your fantasy hockey team!",
-	image: "https://www.heyclem.ca/og/social-preview.png",
+	image: "https://www.heyclem.ca/og/social-preview-v2.png",
 	imageAlt: "Who’s hot? Who’s cold? Fantasy hockey skaters scoring above or below their expected values",
 };
 ---
@@ -54,11 +55,29 @@ const share = {
 		/>
 	</Fragment>
 	<div class="blur-fade-in pb-24">
+		<!-- project brief, styled like the heading and text of the other project pages -->
+		<section class="mb-8 max-w-3xl space-y-3">
+			<div class="flex flex-wrap items-center gap-2">
+				<Tag>Design System</Tag>
+				<Tag>Figma</Tag>
+				<Tag>Claude Code</Tag>
+			</div>
+			<h1 class="font-serif text-4xl text-paper">Fantasy Hockey Player Value Tool</h1>
+			<div class="prose prose-invert max-w-none prose-p:text-ink-100">
+				<p>
+					This was designed and built in 3 days. I designed everything in Figma and used Claude Code with Figma Console
+					MCP to make it Claude ready. <strong>That meant that with one prompt, the entire project was built based on
+					the Figma designs and the structure that Claude prepared.</strong> After that it was just adding the
+					interactions that I was looking to have. Enjoy!
+				</p>
+			</div>
+		</section>
+
 		<!-- overflow-clip rounds the corners without becoming a scroll container, so the table header can stick.
 		     On phones the box runs edge to edge (-mx-10 cancels the layout's side padding) to give the table room. -->
 		<div class="soft-image-shadow -mx-10 overflow-clip border-y border-ink-300/20 bg-[#12100f] py-3 md:mx-0 md:rounded-xl md:border-x md:p-6">
 			<header class="bl-tokens bl-intro">
-				<h1>Hot &amp; Cold !</h1>
+				<h2>Hot &amp; Cold !</h2>
 				<p>{intro}</p>
 				<p class="bl-source">
 					Data from <a href="https://moneypuck.com" target="_blank" rel="noopener noreferrer">MoneyPuck.com</a>{" "}

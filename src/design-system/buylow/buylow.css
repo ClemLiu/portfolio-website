@@ -39,11 +39,11 @@
   cursor: pointer;
 }
 
-/* ---------- page header (above the box) ---------- */
+/* ---------- tool header (at the top of the box) ---------- */
 .bl-intro {
   margin-bottom: 24px;
 }
-.bl-intro h1 {
+.bl-intro h2 {
   font: 600 20px/28px "Golos Text", ui-sans-serif, system-ui, sans-serif;
   letter-spacing: -0.005em;
 }
