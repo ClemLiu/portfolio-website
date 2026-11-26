@@ -954,10 +954,10 @@
 .bl-legend {
   background: var(--subtle);
 }
-/* the whole bar opens and closes it: chevron, name and label on one line, with the note under them */
+/* the whole bar opens and closes it: chevron and name on one line, with the note under the name */
 .bl-legend-bar {
   display: grid;
-  grid-template-columns: 16px auto minmax(0, 1fr);
+  grid-template-columns: 16px minmax(0, 1fr);
   align-items: center;
   gap: 2px 8px;
   width: 100%;
@@ -971,14 +971,9 @@
 .bl-legend-name {
   font: 500 13px/20px "Golos Text", sans-serif;
 }
-.bl-legend-hint {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 16px;
-}
-/* what decides the levels; it lines up under "Momentum" */
+/* what decides the levels; it lines up under the name */
 .bl-legend-note {
-  grid-column: 2 / -1;
+  grid-column: 2;
   color: var(--muted);
   font-size: 13px;
   line-height: 16px;

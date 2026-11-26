@@ -1,0 +1,6 @@
+{
+  "redirects": [
+    { "source": "/work/buy-low-sell-high", "destination": "/work/hot-cold", "permanent": true },
+    { "source": "/work/buy-low-sell-high/", "destination": "/work/hot-cold", "permanent": true }
+  ]
+}

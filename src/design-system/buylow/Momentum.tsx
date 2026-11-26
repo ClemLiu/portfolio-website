@@ -76,8 +76,7 @@ export const MomentumLegend = () => {
     <section className="bl-legend" aria-label="Momentum legend">
       <button type="button" className="bl-legend-bar" aria-expanded={open} onClick={toggle}>
         <Icon name="chevron-right" />
-        <span className="bl-legend-name">Momentum</span>
-        <span className="bl-legend-hint">Legend for Momentum Icon</span>
+        <span className="bl-legend-name">Legend for Momentum Icon</span>
         <span className="bl-legend-note">Determined by FP/GP vs Expected and vs 3Y avg</span>
       </button>
       <Accordion open={open}>
